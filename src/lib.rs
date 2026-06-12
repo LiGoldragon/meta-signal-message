@@ -10,13 +10,24 @@
 //! binary startup message, and later reconfiguration arrives over this meta
 //! plane as the same typed record, never as flags.
 
+#[cfg(feature = "nota-text")]
 use nota_next::{Block, NotaBlock, NotaDecode, NotaDecodeError, NotaEncode};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 pub use signal_message::MessageDaemonConfiguration;
 
 #[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord,
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    PartialOrd,
+    Ord,
 )]
 pub struct ConfigurationGeneration(u64);
 
@@ -30,72 +41,49 @@ impl ConfigurationGeneration {
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaDecode for ConfigurationGeneration {
     fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
         Ok(Self(NotaBlock::new(block).parse_integer()?))
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaEncode for ConfigurationGeneration {
     fn to_nota(&self) -> String {
         self.0.to_string()
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
+#[cfg_attr(feature = "nota-text", derive(NotaEncode, NotaDecode))]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Configured {
     pub generation: ConfigurationGeneration,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
+#[cfg_attr(feature = "nota-text", derive(NotaEncode, NotaDecode))]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ConfigurationRejectionReason {
     ManagerAuthorityRequired,
     MalformedConfiguration,
     UnsupportedConfiguration,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
+#[cfg_attr(feature = "nota-text", derive(NotaEncode, NotaDecode))]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct ConfigurationRejected {
     pub reason: ConfigurationRejectionReason,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
-)]
+#[cfg_attr(feature = "nota-text", derive(NotaEncode, NotaDecode))]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     DependencyNotReady,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
-)]
+#[cfg_attr(feature = "nota-text", derive(NotaEncode, NotaDecode))]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct RequestUnimplemented {
     pub operation: OperationKind,
     pub reason: UnimplementedReason,
