@@ -1,0 +1,16 @@
+;; Canonical NOTA examples for meta-signal-message.
+;;
+;; The Configure payload is signal-message's MessageDaemonConfiguration,
+;; imported rather than duplicated in this contract.
+
+;; Input::Configure
+(Configure (/run/persona/X/message.sock 432 /run/persona/X/message-supervision.sock 384 /run/persona/X/router.sock [] (UnixUser 1000)))
+
+;; Output::Configured
+(Configured 7)
+
+;; Output::ConfigurationRejected
+(ConfigurationRejected ManagerAuthorityRequired)
+
+;; Output::RequestUnimplemented
+(RequestUnimplemented (Configure DependencyNotReady))
