@@ -24,7 +24,12 @@ pub struct ConfigurationGeneration(Integer);
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Configured(ConfigurationGeneration);
+pub struct Generation(ConfigurationGeneration);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Configured(Generation);
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -47,7 +52,12 @@ pub enum ConfigurationRejectionReason {
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct ConfigurationRejected(ConfigurationRejectionReason);
+pub struct RejectionReason(ConfigurationRejectionReason);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ConfigurationRejected(RejectionReason);
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -85,9 +95,19 @@ pub enum UnimplementedReason {
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct UnimplementedOperationKind(OperationKind);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Reason(UnimplementedReason);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RequestUnimplemented {
-    pub operation: OperationKind,
-    pub reason: UnimplementedReason,
+    pub unimplemented_operation_kind: UnimplementedOperationKind,
+    pub reason: Reason,
 }
 
 #[rustfmt::skip]
@@ -144,7 +164,7 @@ impl PartialOrd<u64> for ConfigurationGeneration {
 }
 
 #[rustfmt::skip]
-impl Configured {
+impl Generation {
     pub fn new(payload: ConfigurationGeneration) -> Self {
         Self(payload)
     }
@@ -156,14 +176,33 @@ impl Configured {
     }
 }
 #[rustfmt::skip]
-impl From<ConfigurationGeneration> for Configured {
+impl From<ConfigurationGeneration> for Generation {
     fn from(payload: ConfigurationGeneration) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl ConfigurationRejected {
+impl Configured {
+    pub fn new(payload: Generation) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Generation {
+        &self.0
+    }
+    pub fn into_payload(self) -> Generation {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Generation> for Configured {
+    fn from(payload: Generation) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RejectionReason {
     pub fn new(payload: ConfigurationRejectionReason) -> Self {
         Self(payload)
     }
@@ -175,8 +214,65 @@ impl ConfigurationRejected {
     }
 }
 #[rustfmt::skip]
-impl From<ConfigurationRejectionReason> for ConfigurationRejected {
+impl From<ConfigurationRejectionReason> for RejectionReason {
     fn from(payload: ConfigurationRejectionReason) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl ConfigurationRejected {
+    pub fn new(payload: RejectionReason) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RejectionReason {
+        &self.0
+    }
+    pub fn into_payload(self) -> RejectionReason {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RejectionReason> for ConfigurationRejected {
+    fn from(payload: RejectionReason) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl UnimplementedOperationKind {
+    pub fn new(payload: OperationKind) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &OperationKind {
+        &self.0
+    }
+    pub fn into_payload(self) -> OperationKind {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<OperationKind> for UnimplementedOperationKind {
+    fn from(payload: OperationKind) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Reason {
+    pub fn new(payload: UnimplementedReason) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &UnimplementedReason {
+        &self.0
+    }
+    pub fn into_payload(self) -> UnimplementedReason {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<UnimplementedReason> for Reason {
+    fn from(payload: UnimplementedReason) -> Self {
         Self::new(payload)
     }
 }
@@ -190,10 +286,10 @@ impl Input {
 
 #[rustfmt::skip]
 impl Output {
-    pub fn configured(payload: ConfigurationGeneration) -> Self {
+    pub fn configured(payload: Generation) -> Self {
         Self::Configured(Configured::new(payload))
     }
-    pub fn configuration_rejected(payload: ConfigurationRejectionReason) -> Self {
+    pub fn configuration_rejected(payload: RejectionReason) -> Self {
         Self::ConfigurationRejected(ConfigurationRejected::new(payload))
     }
     pub fn request_unimplemented(payload: RequestUnimplemented) -> Self {

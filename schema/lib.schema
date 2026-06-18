@@ -21,16 +21,20 @@
 {
   ConfigurationGeneration Integer
 
-  Configured { generation.ConfigurationGeneration }
+  Generation ConfigurationGeneration
+  Configured Generation
 
   ConfigurationRejectionReason [
     ManagerAuthorityRequired
     MalformedConfiguration
     UnsupportedConfiguration
   ]
-  ConfigurationRejected { reason.ConfigurationRejectionReason }
+  RejectionReason ConfigurationRejectionReason
+  ConfigurationRejected RejectionReason
 
   OperationKind [Configure]
   UnimplementedReason [NotBuiltYet DependencyNotReady]
-  RequestUnimplemented { operation.OperationKind reason.UnimplementedReason }
+  UnimplementedOperationKind OperationKind
+  Reason UnimplementedReason
+  RequestUnimplemented { UnimplementedOperationKind Reason }
 }

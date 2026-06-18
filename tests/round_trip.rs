@@ -2,7 +2,8 @@
 
 use meta_signal_message::{
     ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Frame, FrameBody,
-    Input, OperationKind, Output, RequestUnimplemented, UnimplementedReason,
+    Generation, Input, OperationKind, Output, Reason, RejectionReason, RequestUnimplemented,
+    UnimplementedOperationKind, UnimplementedReason,
 };
 #[cfg(feature = "nota-text")]
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
@@ -103,13 +104,13 @@ fn configure_request_carries_the_signal_message_configuration_type() {
 #[test]
 fn reply_variants_round_trip() {
     let replies = [
-        Output::configured(ConfigurationGeneration::new(7)),
-        Output::ConfigurationRejected(ConfigurationRejected::new(
+        Output::configured(Generation::new(ConfigurationGeneration::new(7))),
+        Output::ConfigurationRejected(ConfigurationRejected::new(RejectionReason::new(
             ConfigurationRejectionReason::ManagerAuthorityRequired,
-        )),
+        ))),
         Output::RequestUnimplemented(RequestUnimplemented {
-            operation: OperationKind::Configure,
-            reason: UnimplementedReason::DependencyNotReady,
+            unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
+            reason: Reason::new(UnimplementedReason::DependencyNotReady),
         }),
     ];
     for reply in replies {

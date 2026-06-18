@@ -1,8 +1,9 @@
 //! Canonical NOTA examples round-trip witness.
 
 use meta_signal_message::{
-    ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Input,
-    MessageDaemonConfiguration, OperationKind, Output, RequestUnimplemented, UnimplementedReason,
+    ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Generation,
+    Input, MessageDaemonConfiguration, OperationKind, Output, Reason, RejectionReason,
+    RequestUnimplemented, UnimplementedOperationKind, UnimplementedReason,
 };
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_message::{
@@ -51,12 +52,14 @@ fn canonical_input_examples_round_trip() {
 
 #[test]
 fn canonical_output_examples_round_trip() {
-    CanonicalFixture::round_trip(Output::Configured(ConfigurationGeneration::new(7).into()));
+    CanonicalFixture::round_trip(Output::Configured(
+        Generation::new(ConfigurationGeneration::new(7)).into(),
+    ));
     CanonicalFixture::round_trip(Output::ConfigurationRejected(ConfigurationRejected::new(
-        ConfigurationRejectionReason::ManagerAuthorityRequired,
+        RejectionReason::new(ConfigurationRejectionReason::ManagerAuthorityRequired),
     )));
     CanonicalFixture::round_trip(Output::RequestUnimplemented(RequestUnimplemented {
-        operation: OperationKind::Configure,
-        reason: UnimplementedReason::DependencyNotReady,
+        unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
+        reason: Reason::new(UnimplementedReason::DependencyNotReady),
     }));
 }
