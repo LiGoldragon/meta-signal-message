@@ -5,7 +5,9 @@ use meta_signal_message::{
     MessageDaemonConfiguration, OperationKind, Output, RequestUnimplemented, UnimplementedReason,
 };
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
-use signal_message::{OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath};
+use signal_message::{
+    MessageDaemonConfigurationParts, OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath,
+};
 
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
@@ -17,7 +19,7 @@ impl CanonicalFixture {
     }
 
     fn configuration() -> MessageDaemonConfiguration {
-        MessageDaemonConfiguration {
+        MessageDaemonConfiguration::from(MessageDaemonConfigurationParts {
             message_socket_path: Self::path("/run/persona/X/message.sock"),
             message_socket_mode: SocketMode::new(0o660),
             supervision_socket_path: Self::path("/run/persona/X/message-supervision.sock"),
@@ -25,7 +27,7 @@ impl CanonicalFixture {
             router_socket_path: Self::path("/run/persona/X/router.sock"),
             component_ingresses: Vec::new(),
             owner_identity: OwnerIdentity::UnixUser(UnixUserIdentifier::new(1000)),
-        }
+        })
     }
 
     fn round_trip<Value>(value: Value)

@@ -11,7 +11,8 @@ use signal_frame::{
     SubReply,
 };
 use signal_message::{
-    MessageDaemonConfiguration, OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath,
+    MessageDaemonConfiguration, MessageDaemonConfigurationParts, OwnerIdentity, SocketMode,
+    UnixUserIdentifier, WirePath,
 };
 
 struct MessageConfigurationFixture;
@@ -30,7 +31,7 @@ impl MessageConfigurationFixture {
     }
 
     fn configuration() -> MessageDaemonConfiguration {
-        MessageDaemonConfiguration {
+        MessageDaemonConfiguration::from(MessageDaemonConfigurationParts {
             message_socket_path: Self::path("/run/persona/X/message.sock"),
             message_socket_mode: SocketMode::new(0o660),
             supervision_socket_path: Self::path("/run/persona/X/message-supervision.sock"),
@@ -38,7 +39,7 @@ impl MessageConfigurationFixture {
             router_socket_path: Self::path("/run/persona/X/router.sock"),
             component_ingresses: Vec::new(),
             owner_identity: OwnerIdentity::UnixUser(UnixUserIdentifier::new(1000)),
-        }
+        })
     }
 
     fn assert_request_round_trips(request: Input) {

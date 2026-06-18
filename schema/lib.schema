@@ -19,27 +19,18 @@
  (ConfigurationRejected ConfigurationRejected)
  (RequestUnimplemented RequestUnimplemented)]
 {
-  ConfigurationGeneration {
-    value Integer
-  }
+  ConfigurationGeneration Integer
 
-  Configured {
-    generation ConfigurationGeneration
-  }
+  Configured { generation.ConfigurationGeneration }
 
   ConfigurationRejectionReason [
     ManagerAuthorityRequired
     MalformedConfiguration
     UnsupportedConfiguration
   ]
-  ConfigurationRejected {
-    reason ConfigurationRejectionReason
-  }
+  ConfigurationRejected { reason.ConfigurationRejectionReason }
 
   OperationKind [Configure]
   UnimplementedReason [NotBuiltYet DependencyNotReady]
-  RequestUnimplemented {
-    operation OperationKind
-    reason UnimplementedReason
-  }
+  RequestUnimplemented { operation.OperationKind reason.UnimplementedReason }
 }
