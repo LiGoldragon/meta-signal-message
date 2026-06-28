@@ -5,7 +5,7 @@ use meta_signal_message::{
     Input, MessageDaemonConfiguration, OperationKind, Output, Reason, RejectionReason,
     RequestUnimplemented, UnimplementedOperationKind, UnimplementedReason,
 };
-use nota_next::{NotaDecode, NotaEncode, NotaSource};
+use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_message::{
     MessageDaemonConfigurationParts, OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath,
 };
