@@ -50,14 +50,14 @@ MetaMessageOperation                        MetaMessageReply
   contract imports it and exposes the owner/meta authority verb.
 - Message daemon state, sockets, actors, the stamp-and-forward boundary, and
   storage live in `message`.
-- Schema generation machinery lives in `schema-rust-next`.
+- Schema generation machinery lives in `schema-rust`.
 
 ## Code Map
 
 - `schema/lib.schema` is the source of the meta wire vocabulary; it cross-imports
   `MessageDaemonConfiguration` from `signal-message` with the single-colon path
   form so startup and meta reconfiguration share one type identity.
-- `build.rs` runs `schema-rust-next` against the dependency schema and checks the
+- `build.rs` runs `schema-rust` against the dependency schema and checks the
   checked-in artifacts for freshness.
 - `src/schema/lib.rs` is the checked-in generated artifact.
 - `src/lib.rs` re-exports the generated nouns and keeps only tiny handwritten
