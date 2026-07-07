@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf};
 
-use schema_rust::build::{CargoSchemaMetadata, DependencySchema, GenerationDriver, GenerationPlan};
+use schema_rust::build::{DependencySchema, GenerationDriver, GenerationPlan};
 
 fn main() {
     SchemaBuild::from_environment().run();
@@ -21,7 +21,10 @@ impl SchemaBuild {
         println!("cargo:rerun-if-changed=schema/lib.schema");
         println!("cargo:rerun-if-changed=src/schema/lib.rs");
         println!("cargo:rerun-if-env-changed=DEP_SIGNAL_MESSAGE_SCHEMA_DIR");
-        CargoSchemaMetadata::new("meta-signal-message").emit_schema_directory(&self.crate_root);
+        println!(
+            "cargo::metadata=schema-dir={}",
+            self.crate_root.join("schema").display()
+        );
 
         let ordinary_signal =
             DependencySchema::from_cargo_metadata("signal-message", "signal-message", "0.3.0")
