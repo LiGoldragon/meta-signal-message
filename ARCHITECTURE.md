@@ -27,21 +27,21 @@ daemon decodes from its binary startup file.
 
 ```text
 MetaMessageOperation                        MetaMessageReply
-└─ Configure(MessageDaemonConfiguration)    ├─ Configured(ConfigurationGeneration)
-                                            ├─ ConfigurationRejected(reason)
-                                            └─ RequestUnimplemented
+└─ Configure(MessageDaemonConfiguration)    ├─ ConfigurationApplied(ConfigurationGeneration)
+                                            ├─ ConfigurationRefused(reason)
+                                            └─ OperationUnimplemented
 ```
 
 ## Owned
 
 - Meta authority wire vocabulary for message.
 - The `Configure(MessageDaemonConfiguration)` operation.
-- Configuration replies: `Configured` (carries the applied
-  `ConfigurationGeneration`), `ConfigurationRejected` (typed reason:
+- Configuration replies: `ConfigurationApplied` (carries the applied
+  `ConfigurationGeneration`), `ConfigurationRefused` (typed reason:
   `ManagerAuthorityRequired`, `MalformedConfiguration`,
-  `UnsupportedConfiguration`), and `RequestUnimplemented` (typed
+  `UnsupportedConfiguration`), and `OperationUnimplemented` (typed
   `NotBuiltYet` / `DependencyNotReady` reason).
-- Optional NOTA projection behind the `nota-text` feature.
+- Optional DOTOS projection behind the `dotos-text` feature.
 
 ## Not Owned
 
@@ -55,7 +55,7 @@ MetaMessageOperation                        MetaMessageReply
 ## Code Map
 
 - `schema/lib.schema` is the source of the meta wire vocabulary; it cross-imports
-  `MessageDaemonConfiguration` from `signal-message` with the single-colon path
+  `MessageDaemonConfiguration` from `signal-message` with the dotted producer path
   form so startup and meta reconfiguration share one type identity.
 - `build.rs` runs `schema-rust` against the dependency schema and checks the
   checked-in artifacts for freshness.
@@ -63,16 +63,16 @@ MetaMessageOperation                        MetaMessageReply
 - `src/lib.rs` re-exports the generated nouns and keeps only tiny handwritten
   accessors and component aliases (`MetaMessageOperation`, `MetaMessageReply`).
 - `tests/round_trip.rs` proves the meta channel round-trips through signal
-  frames; `tests/canonical_examples.rs` exercises the NOTA projection under
-  `nota-text`.
-- `Cargo.toml` keeps `nota-text` optional and pins the rkyv feature set.
+  frames; `tests/canonical_examples.rs` exercises the DOTOS projection under
+  `dotos-text`.
+- `Cargo.toml` keeps `dotos-text` optional and pins the rkyv feature set.
 - `flake.nix` builds, tests, and checks the contract, including the
-  `nota-text` canonical-examples path.
+  `dotos-text` canonical-examples path.
 
 ## Invariants
 
 - The crate is wire-only: no daemon runtime, no actors, no storage, no tokio.
-- Default builds are NOTA-free; `nota-text` is the explicit text-codec opt-in.
+- Default builds are DOTOS-free; `dotos-text` is the explicit text-codec opt-in.
 - The meta contract reuses `signal_message::MessageDaemonConfiguration`; it does
   not mirror the daemon configuration record.
 - The implementation is schema-derived `WireContract`; there is no parallel

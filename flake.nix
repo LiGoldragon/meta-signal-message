@@ -22,7 +22,7 @@
         craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
         contractFilter = path: type:
           type == "regular"
-          && (pkgs.lib.hasSuffix ".schema" path || pkgs.lib.hasSuffix ".nota" path);
+          && (pkgs.lib.hasSuffix ".schema" path || pkgs.lib.hasSuffix ".dotos" path);
         sourceFilter = path: type:
           type == "directory" || (craneLib.filterCargoSources path type) || (contractFilter path type);
         src = pkgs.lib.cleanSourceWith {
@@ -44,7 +44,7 @@
           });
           test-canonical = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test canonical_examples --features nota-text";
+            cargoTestExtraArgs = "--test canonical_examples --features dotos-text";
           });
           fmt = craneLib.cargoFmt { inherit src; };
           clippy = craneLib.cargoClippy (commonArgs // {

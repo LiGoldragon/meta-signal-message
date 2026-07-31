@@ -1,0 +1,16 @@
+;; Canonical DOTOS examples for meta-signal-message.
+;;
+;; The Configure payload is signal-message's MessageDaemonConfiguration,
+;; imported rather than duplicated in this contract.
+
+;; Input::Configure
+Configure.{/run/persona/X/message.sock 432 /run/persona/X/message-supervision.sock 384 /run/persona/X/router.sock [] UnixUser.1000}
+
+;; Output::ConfigurationApplied
+ConfigurationApplied.7
+
+;; Output::ConfigurationRefused
+ConfigurationRefused.ManagerAuthorityRequired
+
+;; Output::OperationUnimplemented
+OperationUnimplemented.{Configure DependencyNotReady}

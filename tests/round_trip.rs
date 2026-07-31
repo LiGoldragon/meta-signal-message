@@ -1,15 +1,14 @@
 //! Round-trip witnesses for the schema-derived message meta contract.
 
+#[cfg(feature = "dotos-text")]
+use dotos::{DotosDecode, DotosEncode, DotosSource};
 use meta_signal_message::{
     ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Frame, FrameBody,
     Generation, Input, OperationKind, Output, Reason, RejectionReason, RequestUnimplemented,
     UnimplementedOperationKind, UnimplementedReason,
 };
-#[cfg(feature = "nota-text")]
-use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, RequestPayload, SessionEpoch,
-    SubReply,
+    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch, SubReply,
 };
 use signal_message::{
     MessageDaemonConfiguration, MessageDaemonConfigurationParts, OwnerIdentity, SocketMode,
@@ -44,10 +43,7 @@ impl MessageConfigurationFixture {
     }
 
     fn assert_request_round_trips(request: Input) {
-        let frame = Frame::new(FrameBody::Request {
-            exchange: Self::exchange(),
-            request: request.clone().into_request(),
-        });
+        let frame = request.clone().into_frame(Self::exchange());
         let bytes = frame.encode_length_prefixed().expect("encode request");
         let decoded = Frame::decode_length_prefixed(&bytes).expect("decode request");
         match decoded.into_body() {
@@ -60,10 +56,13 @@ impl MessageConfigurationFixture {
     }
 
     fn assert_reply_round_trips(reply: Output) {
-        let frame = Frame::new(FrameBody::Reply {
-            exchange: Self::exchange(),
-            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply.clone()))),
-        });
+        let frame = Frame::new(
+            reply.wire_route(),
+            FrameBody::Reply {
+                exchange: Self::exchange(),
+                reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply.clone()))),
+            },
+        );
         let bytes = frame.encode_length_prefixed().expect("encode reply");
         let decoded = Frame::decode_length_prefixed(&bytes).expect("decode reply");
         match decoded.into_body() {
@@ -81,13 +80,13 @@ impl MessageConfigurationFixture {
         }
     }
 
-    #[cfg(feature = "nota-text")]
-    fn assert_nota_round_trips<Value>(value: &Value)
+    #[cfg(feature = "dotos-text")]
+    fn assert_dotos_round_trips<Value>(value: &Value)
     where
-        Value: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
+        Value: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
     {
-        let text = value.to_nota();
-        let recovered = NotaSource::new(&text).parse::<Value>().expect("decode");
+        let text = value.to_dotos();
+        let recovered = DotosSource::new(&text).parse::<Value>().expect("decode");
         assert_eq!(&recovered, value);
     }
 }
@@ -97,26 +96,26 @@ fn configure_request_carries_the_signal_message_configuration_type() {
     let request = Input::Configure(MessageConfigurationFixture::configuration());
     assert_eq!(request.kind(), OperationKind::Configure);
     MessageConfigurationFixture::assert_request_round_trips(request.clone());
-    #[cfg(feature = "nota-text")]
-    MessageConfigurationFixture::assert_nota_round_trips(&request);
+    #[cfg(feature = "dotos-text")]
+    MessageConfigurationFixture::assert_dotos_round_trips(&request);
 }
 
 #[test]
 fn reply_variants_round_trip() {
     let replies = [
-        Output::configured(Generation::new(ConfigurationGeneration::new(7))),
-        Output::ConfigurationRejected(ConfigurationRejected::new(RejectionReason::new(
+        Output::configuration_applied(Generation::new(ConfigurationGeneration::new(7))),
+        Output::ConfigurationRefused(ConfigurationRejected::new(RejectionReason::new(
             ConfigurationRejectionReason::ManagerAuthorityRequired,
         ))),
-        Output::RequestUnimplemented(RequestUnimplemented {
+        Output::OperationUnimplemented(RequestUnimplemented {
             unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
             reason: Reason::new(UnimplementedReason::DependencyNotReady),
         }),
     ];
     for reply in replies {
         MessageConfigurationFixture::assert_reply_round_trips(reply.clone());
-        #[cfg(feature = "nota-text")]
-        MessageConfigurationFixture::assert_nota_round_trips(&reply);
+        #[cfg(feature = "dotos-text")]
+        MessageConfigurationFixture::assert_dotos_round_trips(&reply);
     }
 }
 

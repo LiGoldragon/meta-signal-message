@@ -1,40 +1,42 @@
 ;; meta-signal-message — meta-only authority/configuration wire
 ;; contract for the message daemon.
 ;;
-;; Wire-only: emits the rkyv + optional NOTA codec and the
+;; Wire-only: emits the rkyv + optional DOTOS codec and the
 ;; signal-frame request/reply envelope. Ordinary message traffic stays in
 ;; signal-message; daemon runtime, sockets, actors, and storage stay in
 ;; message.
 ;;
 ;; SHARED-TYPE OWNERSHIP. The daemon startup configuration is defined
 ;; once in the ordinary signal-message contract and cross-imported here
-;; with the single-colon path form signal-message:lib:TypeName. Startup
+;; with the dotted producer path form signal-message.lib.TypeName. Startup
 ;; and meta reconfiguration therefore share one type identity.
 
 {
-  MessageDaemonConfiguration signal-message:lib:MessageDaemonConfiguration
+  signal-message.lib.MessageDaemonConfiguration
 }
-[(Configure MessageDaemonConfiguration)]
-[(Configured Configured)
- (ConfigurationRejected ConfigurationRejected)
- (RequestUnimplemented RequestUnimplemented)]
+[Configure.MessageDaemonConfiguration]
+[ConfigurationApplied.Configured
+ ConfigurationRefused.ConfigurationRejected
+ OperationUnimplemented.RequestUnimplemented]
 {
-  ConfigurationGeneration Integer
+  ConfigurationGeneration.Integer
 
-  Generation ConfigurationGeneration
-  Configured Generation
+  Generation.ConfigurationGeneration
+  Configured.Generation
 
-  ConfigurationRejectionReason [
+  ConfigurationRejectionReason.[
     ManagerAuthorityRequired
     MalformedConfiguration
     UnsupportedConfiguration
   ]
-  RejectionReason ConfigurationRejectionReason
-  ConfigurationRejected RejectionReason
+  RejectionReason.ConfigurationRejectionReason
+  ConfigurationRejected.RejectionReason
 
-  OperationKind [Configure]
-  UnimplementedReason [NotBuiltYet DependencyNotReady]
-  UnimplementedOperationKind OperationKind
-  Reason UnimplementedReason
-  RequestUnimplemented { UnimplementedOperationKind Reason }
+  OperationKind.[Configure]
+  UnimplementedReason.[NotBuiltYet DependencyNotReady]
+  UnimplementedOperationKind.OperationKind
+  Reason.UnimplementedReason
+  RequestUnimplemented.{ UnimplementedOperationKind Reason }
 }
+{}
+{}

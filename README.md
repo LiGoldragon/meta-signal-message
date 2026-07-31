@@ -7,7 +7,8 @@ pair (`signal-message` ordinary + `meta-signal-message` meta). The meta plane's
 baseline content is daemon configuration: a typed `Configure` operation
 carrying `message`'s `*DaemonConfiguration` (the same record that is the daemon's
 binary startup message), with `Configured` / `ConfigurationRejected` /
-`RequestUnimplemented` replies.
+`ConfigurationRefused` / `OperationUnimplemented` replies. A successful
+configuration reply is `ConfigurationApplied`.
 
-Default builds stay binary/rkyv-only; enable `nota-text` for CLI/debug
+Default builds stay binary/rkyv-only; enable `dotos-text` for CLI/debug
 projection. See `ARCHITECTURE.md`.

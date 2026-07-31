@@ -1,5 +1,6 @@
 use std::{env, path::PathBuf};
 
+use protos::WireContractFamily;
 use schema_rust::build::{CargoSchemaMetadata, DependencySchema, GenerationDriver, GenerationPlan};
 
 fn main() {
@@ -31,8 +32,13 @@ impl SchemaBuild {
                 );
 
         GenerationDriver::new(
-            GenerationPlan::wire_contract(&self.crate_root, "meta-signal-message", "0.1.0")
-                .with_dependency_schema(ordinary_signal),
+            GenerationPlan::wire_contract(
+                &self.crate_root,
+                "meta-signal-message",
+                "0.2.0",
+                WireContractFamily::MetaSignalSpirit,
+            )
+            .with_dependency_schema(ordinary_signal),
         )
         .generate()
         .expect("generate meta-signal-message schema artifacts")

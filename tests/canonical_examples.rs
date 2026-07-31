@@ -1,16 +1,16 @@
-//! Canonical NOTA examples round-trip witness.
+//! Canonical DOTOS examples round-trip witness.
 
+use dotos::{DotosDecode, DotosEncode, DotosSource};
 use meta_signal_message::{
     ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Generation,
     Input, MessageDaemonConfiguration, OperationKind, Output, Reason, RejectionReason,
     RequestUnimplemented, UnimplementedOperationKind, UnimplementedReason,
 };
-use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_message::{
     MessageDaemonConfigurationParts, OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath,
 };
 
-const CANONICAL: &str = include_str!("../examples/canonical.nota");
+const CANONICAL: &str = include_str!("../examples/canonical.dotos");
 
 struct CanonicalFixture;
 
@@ -33,14 +33,14 @@ impl CanonicalFixture {
 
     fn round_trip<Value>(value: Value)
     where
-        Value: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
+        Value: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
     {
-        let text = value.to_nota();
-        let decoded = NotaSource::new(&text).parse::<Value>().expect("decode");
+        let text = value.to_dotos();
+        let decoded = DotosSource::new(&text).parse::<Value>().expect("decode");
         assert_eq!(decoded, value, "decode for {text}");
         assert!(
             CANONICAL.contains(&text),
-            "examples/canonical.nota missing line: {text}",
+            "examples/canonical.dotos missing line: {text}",
         );
     }
 }
@@ -52,13 +52,13 @@ fn canonical_input_examples_round_trip() {
 
 #[test]
 fn canonical_output_examples_round_trip() {
-    CanonicalFixture::round_trip(Output::Configured(
+    CanonicalFixture::round_trip(Output::ConfigurationApplied(
         Generation::new(ConfigurationGeneration::new(7)).into(),
     ));
-    CanonicalFixture::round_trip(Output::ConfigurationRejected(ConfigurationRejected::new(
+    CanonicalFixture::round_trip(Output::ConfigurationRefused(ConfigurationRejected::new(
         RejectionReason::new(ConfigurationRejectionReason::ManagerAuthorityRequired),
     )));
-    CanonicalFixture::round_trip(Output::RequestUnimplemented(RequestUnimplemented {
+    CanonicalFixture::round_trip(Output::OperationUnimplemented(RequestUnimplemented {
         unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
         reason: Reason::new(UnimplementedReason::DependencyNotReady),
     }));
