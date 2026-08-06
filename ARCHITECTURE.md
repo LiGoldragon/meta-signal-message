@@ -1,79 +1,44 @@
-# meta-signal-message - architecture
+# ARCHITECTURE — meta-signal-message
 
-`meta-signal-message` is the meta-only wire contract for privileged
-`message-daemon` configuration. It is the authority/configuration companion to
-the ordinary `signal-message` contract.
+`meta-signal-message` is the owner authority relation for Message daemon
+configuration. The ordinary producer owns the configuration Type; this
+Interface imports that same opaque identity so startup and live configuration
+cannot drift into parallel records.
 
-## Direction
+## Interface
 
-This repo is the second leg of the message contract pair. Every Persona
-component has exactly two contracts: the ordinary `signal-<component>` and the
-meta `meta-signal-<component>`. `meta-signal-message` is the authority surface
-that configures the `message-daemon`, including the ingress socket mode and the
-engine-owner origin policy the stamp-and-forward boundary binds; before it,
-`message` had only its ordinary contract.
+The sole authored source is `ethos/interface.ethos`, a role-free
+`Interface.{1 0 0}` document. Its import header names
+`signal_message:lib.MessageDaemonConfiguration`. `build.rs` resolves the
+producer-published Ethos directory, verifies that its text is exactly the
+source compiled into the pinned producer dependency, and seats the imported
+producer identity in the local catalog.
 
-Engine-owner registration and ingress origin policy are daemon configuration, so
-they live inside the `Configure` payload rather than as bespoke operations.
-Reconfiguration arrives over the meta plane as the same typed record, never as
-flags.
+The local Types are ConfigurationGeneration, typed rejection and
+unimplemented reasons, and the strict `OwnerRequest` / `OwnerReply` roots.
+Their Rust coordinates and variants are encoded. Dotos uses the authority's
+textual metadata to retain the domain spellings.
 
-## Surface
+## Current behavior slice
 
-The crate defines the meta channel that lets the owning authority configure a
-message daemon. The baseline operation is `Configure`, carrying
-`signal_message::MessageDaemonConfiguration`, the same typed startup record the
-daemon decodes from its binary startup file.
+Archive behavior, Dotos behavior, owner role routing, and the Signal frame
+binding are handwritten in `src/schema/lib/behavior.rs` until Logos expresses
+that slice. The request role has one route, Configure. The reply role has
+ConfigurationApplied, ConfigurationRefused, and OperationUnimplemented. The
+allocated frame contract is ID 2 at wire revision 2.
 
-```text
-MetaMessageOperation                        MetaMessageReply
-└─ Configure(MessageDaemonConfiguration)    ├─ ConfigurationApplied(ConfigurationGeneration)
-                                            ├─ ConfigurationRefused(reason)
-                                            └─ OperationUnimplemented
-```
+## Boundaries
 
-## Owned
+This repository owns the owner relation vocabulary and frame legality. It owns
+no daemon runtime, authentication mechanism, sockets, actors, storage, process
+supervision, or ordinary message traffic.
 
-- Meta authority wire vocabulary for message.
-- The `Configure(MessageDaemonConfiguration)` operation.
-- Configuration replies: `ConfigurationApplied` (carries the applied
-  `ConfigurationGeneration`), `ConfigurationRefused` (typed reason:
-  `ManagerAuthorityRequired`, `MalformedConfiguration`,
-  `UnsupportedConfiguration`), and `OperationUnimplemented` (typed
-  `NotBuiltYet` / `DependencyNotReady` reason).
-- Optional DOTOS projection behind the `dotos-text` feature.
+## Proof surfaces
 
-## Not Owned
-
-- Ordinary message submission and inbox traffic lives in `signal-message`.
-- The shared `MessageDaemonConfiguration` record lives in `signal-message`; this
-  contract imports it and exposes the owner/meta authority verb.
-- Message daemon state, sockets, actors, the stamp-and-forward boundary, and
-  storage live in `message`.
-- Schema generation machinery lives in `schema-rust`.
-
-## Code Map
-
-- `schema/lib.schema` is the source of the meta wire vocabulary; it cross-imports
-  `MessageDaemonConfiguration` from `signal-message` with the dotted producer path
-  form so startup and meta reconfiguration share one type identity.
-- `build.rs` runs `schema-rust` against the dependency schema and checks the
-  checked-in artifacts for freshness.
-- `src/schema/lib.rs` is the checked-in generated artifact.
-- `src/lib.rs` re-exports the generated nouns and keeps only tiny handwritten
-  accessors and component aliases (`MetaMessageOperation`, `MetaMessageReply`).
-- `tests/round_trip.rs` proves the meta channel round-trips through signal
-  frames; `tests/canonical_examples.rs` exercises the DOTOS projection under
-  `dotos-text`.
-- `Cargo.toml` keeps `dotos-text` optional and pins the rkyv feature set.
-- `flake.nix` builds, tests, and checks the contract, including the
-  `dotos-text` canonical-examples path.
-
-## Invariants
-
-- The crate is wire-only: no daemon runtime, no actors, no storage, no tokio.
-- Default builds are DOTOS-free; `dotos-text` is the explicit text-codec opt-in.
-- The meta contract reuses `signal_message::MessageDaemonConfiguration`; it does
-  not mirror the daemon configuration record.
-- The implementation is schema-derived `WireContract`; there is no parallel
-  handwritten channel surface.
+- `tests/interface_contract.rs` proves the exact producer identity import,
+  empty Interface role lists, and strict local/imported Rust coordinates.
+- `tests/round_trip.rs` proves every request and reply route through frame
+  bytes.
+- `tests/canonical_examples.rs` proves readable Dotos examples.
+- `tests/dependency_boundary.rs` proves the corrected generator and runtime
+  boundary, and fences historical source machinery at exact zero.

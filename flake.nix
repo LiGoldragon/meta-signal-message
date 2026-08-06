@@ -22,7 +22,7 @@
         craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
         contractFilter = path: type:
           type == "regular"
-          && (pkgs.lib.hasSuffix ".schema" path || pkgs.lib.hasSuffix ".dotos" path);
+          && (pkgs.lib.hasSuffix ".ethos" path || pkgs.lib.hasSuffix ".dotos" path);
         sourceFilter = path: type:
           type == "directory" || (craneLib.filterCargoSources path type) || (contractFilter path type);
         src = pkgs.lib.cleanSourceWith {
@@ -46,6 +46,22 @@
             inherit cargoArtifacts;
             cargoTestExtraArgs = "--test canonical_examples --features dotos-text";
           });
+          test-interface-contract = craneLib.cargoTest (commonArgs // {
+            inherit cargoArtifacts;
+            cargoTestExtraArgs = "--test interface_contract";
+          });
+          test-dependency-boundary = craneLib.cargoTest (commonArgs // {
+            inherit cargoArtifacts;
+            cargoTestExtraArgs = "--test dependency_boundary";
+          });
+          test-doc = craneLib.cargoTest (commonArgs // {
+            inherit cargoArtifacts;
+            cargoTestExtraArgs = "--doc";
+          });
+          doc = craneLib.cargoDoc (commonArgs // {
+            inherit cargoArtifacts;
+            RUSTDOCFLAGS = "-D warnings";
+          });
           fmt = craneLib.cargoFmt { inherit src; };
           clippy = craneLib.cargoClippy (commonArgs // {
             inherit cargoArtifacts;
@@ -56,5 +72,6 @@
           name = "meta-signal-message";
           packages = [ pkgs.jujutsu pkgs.pkg-config toolchain ];
         };
+        formatter = pkgs.nixfmt;
       });
 }

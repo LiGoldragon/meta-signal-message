@@ -1,30 +1,13 @@
-//! Schema-derived meta signal contract for privileged `message` daemon
-//! configuration.
+//! Owner Message configuration Interface.
 //!
-//! Ordinary message submission and inbox traffic lives in `signal-message`.
-//! This crate carries the meta plane: the authenticated `Configure` operation
-//! that applies `message`'s typed daemon configuration (the ingress socket
-//! mode and engine-owner origin policy the stamp-and-forward daemon binds).
+//! The producer-owned Message configuration Type is imported by identity.
+//! The local Type projection is strict; owner request/reply behavior remains
+//! handwritten until Logos owns that operational slice.
 
-#[rustfmt::skip]
+pub mod bootstrap_manifest;
 pub mod schema;
 
+pub const META_MESSAGE_INTERFACE_SOURCE: &str = include_str!("../ethos/interface.ethos");
+pub const META_MESSAGE_INTERFACE_RUST: &str = include_str!("schema/lib/generated.rs");
+
 pub use schema::lib::*;
-
-impl ConfigurationGeneration {
-    pub fn value(&self) -> u64 {
-        *self.payload()
-    }
-}
-
-impl Input {
-    pub fn kind(&self) -> OperationKind {
-        match self {
-            Self::Configure(_) => OperationKind::Configure,
-        }
-    }
-}
-
-pub type Operation = Input;
-pub type MetaMessageOperation = Input;
-pub type MetaMessageReply = Output;

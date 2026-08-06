@@ -1,65 +1,48 @@
-//! Canonical DOTOS examples round-trip witness.
+#![cfg(feature = "dotos-text")]
 
 use dotos::{DotosDecode, DotosEncode, DotosSource};
-use meta_signal_message::{
-    ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Generation,
-    Input, MessageDaemonConfiguration, OperationKind, Output, Reason, RejectionReason,
-    RequestUnimplemented, UnimplementedOperationKind, UnimplementedReason,
-};
-use signal_message::{
-    MessageDaemonConfigurationParts, OwnerIdentity, SocketMode, UnixUserIdentifier, WirePath,
+use meta_signal_message::schema::lib::*;
+use signal_message::schema::lib::{
+    z2VL2C, z2VPa3, z2VPn2, z2VQY5, z2VRJp, z2VRPH, z2VUUz, z2VUqb, z2VYZK, z2VZv9, z2VaVk,
 };
 
 const CANONICAL: &str = include_str!("../examples/canonical.dotos");
 
-struct CanonicalFixture;
+fn path(value: &str) -> z2VQY5 {
+    z2VQY5::new(value.to_owned())
+}
 
-impl CanonicalFixture {
-    fn path(value: &str) -> WirePath {
-        WirePath::new(value.to_owned())
-    }
-
-    fn configuration() -> MessageDaemonConfiguration {
-        MessageDaemonConfiguration::from(MessageDaemonConfigurationParts {
-            message_socket_path: Self::path("/run/persona/X/message.sock"),
-            message_socket_mode: SocketMode::new(0o660),
-            supervision_socket_path: Self::path("/run/persona/X/message-supervision.sock"),
-            supervision_socket_mode: SocketMode::new(0o600),
-            router_socket_path: Self::path("/run/persona/X/router.sock"),
-            component_ingresses: Vec::new(),
-            owner_identity: OwnerIdentity::UnixUser(UnixUserIdentifier::new(1000)),
-        })
-    }
-
-    fn round_trip<Value>(value: Value)
-    where
-        Value: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
-    {
-        let text = value.to_dotos();
-        let decoded = DotosSource::new(&text).parse::<Value>().expect("decode");
-        assert_eq!(decoded, value, "decode for {text}");
-        assert!(
-            CANONICAL.contains(&text),
-            "examples/canonical.dotos missing line: {text}",
-        );
+fn configuration() -> z2VL2C {
+    z2VL2C {
+        field_0: z2VUUz::new(path("/run/persona/X/message.sock")),
+        field_1: z2VPa3::new(z2VYZK::new(0o660)),
+        field_2: z2VRJp::new(path("/run/persona/X/message-supervision.sock")),
+        field_3: z2VaVk::new(z2VYZK::new(0o600)),
+        field_4: z2VZv9::new(path("/run/persona/X/router.sock")),
+        field_5: z2VRPH::new(vec![]),
+        field_6: z2VUqb::z2Vd9P(z2VPn2::new(1000)),
     }
 }
 
-#[test]
-fn canonical_input_examples_round_trip() {
-    CanonicalFixture::round_trip(Input::Configure(CanonicalFixture::configuration()));
+fn witness<Value>(value: Value)
+where
+    Value: DotosDecode + DotosEncode + PartialEq + std::fmt::Debug,
+{
+    let text = value.to_dotos();
+    assert!(CANONICAL.contains(&text), "missing canonical line: {text}");
+    assert_eq!(
+        DotosSource::new(&text).parse::<Value>().expect("decode"),
+        value
+    );
 }
 
 #[test]
-fn canonical_output_examples_round_trip() {
-    CanonicalFixture::round_trip(Output::ConfigurationApplied(
-        Generation::new(ConfigurationGeneration::new(7)).into(),
-    ));
-    CanonicalFixture::round_trip(Output::ConfigurationRefused(ConfigurationRejected::new(
-        RejectionReason::new(ConfigurationRejectionReason::ManagerAuthorityRequired),
-    )));
-    CanonicalFixture::round_trip(Output::OperationUnimplemented(RequestUnimplemented {
-        unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
-        reason: Reason::new(UnimplementedReason::DependencyNotReady),
+fn readable_owner_roles_round_trip() {
+    witness(z2Vc2e::z2VWNS(configuration()));
+    witness(z2VYLc::z2VT5g(z2VZEw::new(z2VLUj::new(z2VYdt::new(7)))));
+    witness(z2VYLc::z2VcWw(z2VTC7::new(z2VW54::new(z2VWBb::z2Vay1))));
+    witness(z2VYLc::z2Vc4F(z2VR6z {
+        field_0: z2VUdf::new(z2VY5P::z2Vdbu),
+        field_1: z2VKyZ::new(z2VM7X::z2VX9E),
     }));
 }

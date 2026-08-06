@@ -1,0 +1,8 @@
+Interface.{1 0 0}
+[signal_message:lib.[MessageDaemonConfiguration]]
+{
+  []
+  []
+  []
+  [Generation.ConfigurationGeneration OperationKind.[Configure] ConfigurationRejected.RejectionReason Configured.Generation UnimplementedReason.[NotBuiltYet DependencyNotReady] RequestUnimplemented.{UnimplementedOperationKind Reason} OwnerRequest.[Configure.MessageDaemonConfiguration] Reason.UnimplementedReason RejectionReason.ConfigurationRejectionReason OwnerReply.[ConfigurationRefused.ConfigurationRejected ConfigurationApplied.Configured OperationUnimplemented.RequestUnimplemented] UnimplementedOperationKind.OperationKind ConfigurationGeneration.Integer ConfigurationRejectionReason.[ManagerAuthorityRequired UnsupportedConfiguration MalformedConfiguration]]
+}

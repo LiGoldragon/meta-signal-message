@@ -1,14 +1,15 @@
 # meta-signal-message
 
-Meta signal contract for privileged message daemon configuration.
+The owner Message configuration Interface. It imports
+`MessageDaemonConfiguration` from the ordinary `signal-message` producer by
+identity and adds the owner-only Configure request and its three reply shapes.
 
-The meta-only wire contract for `message` — the second leg of the two-contract
-pair (`signal-message` ordinary + `meta-signal-message` meta). The meta plane's
-baseline content is daemon configuration: a typed `Configure` operation
-carrying `message`'s `*DaemonConfiguration` (the same record that is the daemon's
-binary startup message), with `Configured` / `ConfigurationRejected` /
-`ConfigurationRefused` / `OperationUnimplemented` replies. A successful
-configuration reply is `ConfigurationApplied`.
+`ethos/interface.ethos` is the sole authored Interface projection. The build
+resolves the exact producer source published by `signal-message`, assembles the
+owner Interface under its recorded authority, and freshness-checks the strict
+encoded Rust projection. Dotos remains optional and presents the readable
+Configure, ConfigurationApplied, ConfigurationRefused, and
+OperationUnimplemented names.
 
-Default builds stay binary/rkyv-only; enable `dotos-text` for CLI/debug
-projection. See `ARCHITECTURE.md`.
+Run `nix --option substituters https://cache.nixos.org flake check
+--print-build-logs` for the complete proof matrix.

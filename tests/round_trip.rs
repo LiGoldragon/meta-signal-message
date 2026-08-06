@@ -1,126 +1,85 @@
-//! Round-trip witnesses for the schema-derived message meta contract.
-
-#[cfg(feature = "dotos-text")]
-use dotos::{DotosDecode, DotosEncode, DotosSource};
-use meta_signal_message::{
-    ConfigurationGeneration, ConfigurationRejected, ConfigurationRejectionReason, Frame, FrameBody,
-    Generation, Input, OperationKind, Output, Reason, RejectionReason, RequestUnimplemented,
-    UnimplementedOperationKind, UnimplementedReason,
-};
-use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch, SubReply,
-};
-use signal_message::{
-    MessageDaemonConfiguration, MessageDaemonConfigurationParts, OwnerIdentity, SocketMode,
-    UnixUserIdentifier, WirePath,
+use meta_signal_message::schema::lib::*;
+use signal_frame::{ExchangeIdentifier, ExchangeLane, LaneSequence, Reply, SessionEpoch, SubReply};
+use signal_message::schema::lib::{
+    z2VL2C, z2VPa3, z2VPn2, z2VQY5, z2VRJp, z2VRPH, z2VUUz, z2VUqb, z2VYZK, z2VZv9, z2VaVk,
 };
 
-struct MessageConfigurationFixture;
+fn exchange() -> ExchangeIdentifier {
+    ExchangeIdentifier::new(
+        SessionEpoch::new(2),
+        ExchangeLane::Connector,
+        LaneSequence::first(),
+    )
+}
 
-impl MessageConfigurationFixture {
-    fn exchange() -> ExchangeIdentifier {
-        ExchangeIdentifier::new(
-            SessionEpoch::new(1),
-            ExchangeLane::Connector,
-            LaneSequence::first(),
-        )
-    }
+fn path(value: &str) -> z2VQY5 {
+    z2VQY5::new(value.to_owned())
+}
 
-    fn path(value: &str) -> WirePath {
-        WirePath::new(value.to_owned())
-    }
-
-    fn configuration() -> MessageDaemonConfiguration {
-        MessageDaemonConfiguration::from(MessageDaemonConfigurationParts {
-            message_socket_path: Self::path("/run/persona/X/message.sock"),
-            message_socket_mode: SocketMode::new(0o660),
-            supervision_socket_path: Self::path("/run/persona/X/message-supervision.sock"),
-            supervision_socket_mode: SocketMode::new(0o600),
-            router_socket_path: Self::path("/run/persona/X/router.sock"),
-            component_ingresses: Vec::new(),
-            owner_identity: OwnerIdentity::UnixUser(UnixUserIdentifier::new(1000)),
-        })
-    }
-
-    fn assert_request_round_trips(request: Input) {
-        let frame = request.clone().into_frame(Self::exchange());
-        let bytes = frame.encode_length_prefixed().expect("encode request");
-        let decoded = Frame::decode_length_prefixed(&bytes).expect("decode request");
-        match decoded.into_body() {
-            FrameBody::Request {
-                request: decoded_request,
-                ..
-            } => assert_eq!(decoded_request.payloads().head(), &request),
-            other => panic!("expected request frame, got {other:?}"),
-        }
-    }
-
-    fn assert_reply_round_trips(reply: Output) {
-        let frame = Frame::new(
-            reply.wire_route(),
-            FrameBody::Reply {
-                exchange: Self::exchange(),
-                reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply.clone()))),
-            },
-        );
-        let bytes = frame.encode_length_prefixed().expect("encode reply");
-        let decoded = Frame::decode_length_prefixed(&bytes).expect("decode reply");
-        match decoded.into_body() {
-            FrameBody::Reply {
-                reply: decoded_reply,
-                ..
-            } => match decoded_reply {
-                Reply::Accepted { per_operation, .. } => match per_operation.into_head() {
-                    SubReply::Ok(payload) => assert_eq!(payload, reply),
-                    other => panic!("expected accepted reply payload, got {other:?}"),
-                },
-                Reply::Rejected { reason } => panic!("unexpected rejected reply: {reason:?}"),
-            },
-            other => panic!("expected reply frame, got {other:?}"),
-        }
-    }
-
-    #[cfg(feature = "dotos-text")]
-    fn assert_dotos_round_trips<Value>(value: &Value)
-    where
-        Value: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
-    {
-        let text = value.to_dotos();
-        let recovered = DotosSource::new(&text).parse::<Value>().expect("decode");
-        assert_eq!(&recovered, value);
+fn configuration() -> z2VL2C {
+    z2VL2C {
+        field_0: z2VUUz::new(path("/run/persona/X/message.sock")),
+        field_1: z2VPa3::new(z2VYZK::new(0o660)),
+        field_2: z2VRJp::new(path("/run/persona/X/message-supervision.sock")),
+        field_3: z2VaVk::new(z2VYZK::new(0o600)),
+        field_4: z2VZv9::new(path("/run/persona/X/router.sock")),
+        field_5: z2VRPH::new(vec![]),
+        field_6: z2VUqb::z2Vd9P(z2VPn2::new(1000)),
     }
 }
 
-#[test]
-fn configure_request_carries_the_signal_message_configuration_type() {
-    let request = Input::Configure(MessageConfigurationFixture::configuration());
-    assert_eq!(request.kind(), OperationKind::Configure);
-    MessageConfigurationFixture::assert_request_round_trips(request.clone());
-    #[cfg(feature = "dotos-text")]
-    MessageConfigurationFixture::assert_dotos_round_trips(&request);
-}
-
-#[test]
-fn reply_variants_round_trip() {
-    let replies = [
-        Output::configuration_applied(Generation::new(ConfigurationGeneration::new(7))),
-        Output::ConfigurationRefused(ConfigurationRejected::new(RejectionReason::new(
-            ConfigurationRejectionReason::ManagerAuthorityRequired,
-        ))),
-        Output::OperationUnimplemented(RequestUnimplemented {
-            unimplemented_operation_kind: UnimplementedOperationKind::new(OperationKind::Configure),
-            reason: Reason::new(UnimplementedReason::DependencyNotReady),
+fn outputs() -> [z2VYLc; 3] {
+    [
+        z2VYLc::z2VT5g(z2VZEw::new(z2VLUj::new(z2VYdt::new(7)))),
+        z2VYLc::z2VcWw(z2VTC7::new(z2VW54::new(z2VWBb::z2Vay1))),
+        z2VYLc::z2Vc4F(z2VR6z {
+            field_0: z2VUdf::new(z2VY5P::z2Vdbu),
+            field_1: z2VKyZ::new(z2VM7X::z2VX9E),
         }),
-    ];
-    for reply in replies {
-        MessageConfigurationFixture::assert_reply_round_trips(reply.clone());
-        #[cfg(feature = "dotos-text")]
-        MessageConfigurationFixture::assert_dotos_round_trips(&reply);
+    ]
+}
+
+#[test]
+fn owner_request_imports_and_round_trips_the_producer_type() {
+    let input = z2Vc2e::z2VWNS(configuration());
+    assert_eq!(input.route(), InputRoute::Configure);
+    let bytes = input
+        .clone()
+        .into_frame(exchange())
+        .encode_length_prefixed()
+        .expect("encode request");
+    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode request");
+    let FrameBody::Request { request, .. } = decoded.into_body() else {
+        panic!("expected request")
+    };
+    assert_eq!(request.payloads().head(), &input);
+}
+
+#[test]
+fn every_owner_reply_round_trips() {
+    for output in outputs() {
+        let expected = output.clone();
+        let bytes = output
+            .into_reply_frame(exchange())
+            .encode_length_prefixed()
+            .expect("encode reply");
+        let decoded = Frame::decode_length_prefixed(&bytes).expect("decode reply");
+        let FrameBody::Reply { reply, .. } = decoded.into_body() else {
+            panic!("expected reply")
+        };
+        let Reply::Accepted { per_operation, .. } = reply else {
+            panic!("expected accepted reply")
+        };
+        let SubReply::Ok(actual) = per_operation.into_head() else {
+            panic!("expected reply payload")
+        };
+        assert_eq!(actual, expected);
     }
 }
 
 #[test]
-fn configuration_generation_projects_to_integer() {
-    let generation = ConfigurationGeneration::new(11);
-    assert_eq!(generation.value(), 11);
+fn route_order_is_explicit() {
+    assert_eq!(InputRoute::Configure as u8, 0);
+    assert_eq!(OutputRoute::ConfigurationApplied as u8, 0);
+    assert_eq!(OutputRoute::OperationUnimplemented as u8, 2);
 }
