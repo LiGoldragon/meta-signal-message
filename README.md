@@ -1,15 +1,20 @@
 # meta-signal-message
 
-The owner Message configuration Interface. It imports
-`MessageDaemonConfiguration` from the ordinary `signal-message` producer by
-identity and adds the owner-only Configure request and its three reply shapes.
+The meta Message Signal contract: the privileged channel on which a manager
+configures the Message daemon.
 
-`ethos/interface.ethos` is the sole authored Interface projection. The build
-resolves the exact producer source published by `signal-message`, assembles the
-owner Interface under its recorded authority, and freshness-checks the strict
-encoded Rust projection. Dotos remains optional and presents the readable
-Configure, ConfigurationApplied, ConfigurationRefused, and
-OperationUnimplemented names.
+`MessageDaemonConfiguration` is owned by the ordinary `signal-message`
+contract and imported here by identity, so startup configuration and live
+reconfiguration cannot drift into parallel records.
 
-Run `nix --option substituters https://cache.nixos.org flake check
---print-build-logs` for the complete proof matrix.
+`ethos/signal.ethos` is the sole authored source. `build.rs` regenerates it
+with `ethos-zero` and asserts the result equals the committed
+`src/generated/signal.rs`, so the checked-in projection can never drift from
+its source. `src/lib.rs` adds the rkyv `Signal` / `Signalizable` /
+`ByteViewable` / `Restorable` frame surface shared by every Signal contract.
+
+The `datom` feature adds the Datom text projection. `examples/canonical.datom`
+carries one line per contract head; `tests/contract.rs` actualizes every line
+and re-renders it through the codec, so a wrong wire shape cannot sit unread.
+
+Run `nix flake check -L` for the complete proof matrix.

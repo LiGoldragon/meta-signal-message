@@ -1,0 +1,5 @@
+Signal
+[ signal_message:[ MessageDaemonConfiguration ] ]
+[ Configure.MessageDaemonConfiguration ]
+[ ConfigurationRefused.ConfigurationRejected ConfigurationApplied.Configured OperationUnimplemented.RequestUnimplemented ]
+[ ConfigurationRejected.RejectionReason RejectionReason.ConfigurationRejectionReason ConfigurationRejectionReason.[ ManagerAuthorityRequired UnsupportedConfiguration MalformedConfiguration ] Configured.Generation Generation.ConfigurationGeneration ConfigurationGeneration.Integer RequestUnimplemented.{ UnimplementedOperationKind Reason } UnimplementedOperationKind.OperationKind OperationKind.[ Configure ] Reason.UnimplementedReason UnimplementedReason.[ NotBuiltYet DependencyNotReady ] ]

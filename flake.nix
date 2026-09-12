@@ -22,7 +22,7 @@
         craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
         contractFilter = path: type:
           type == "regular"
-          && (pkgs.lib.hasSuffix ".ethos" path || pkgs.lib.hasSuffix ".dotos" path);
+          && (pkgs.lib.hasSuffix ".ethos" path || pkgs.lib.hasSuffix ".datom" path);
         sourceFilter = path: type:
           type == "directory" || (craneLib.filterCargoSources path type) || (contractFilter path type);
         src = pkgs.lib.cleanSourceWith {
@@ -38,21 +38,13 @@
         checks = {
           build = craneLib.cargoBuild (commonArgs // { inherit cargoArtifacts; });
           test = craneLib.cargoTest (commonArgs // { inherit cargoArtifacts; });
-          test-round-trip = craneLib.cargoTest (commonArgs // {
+          test-contract = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test round_trip";
+            cargoTestExtraArgs = "--test contract";
           });
-          test-canonical = craneLib.cargoTest (commonArgs // {
+          test-contract-datom = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test canonical_examples --features dotos-text";
-          });
-          test-interface-contract = craneLib.cargoTest (commonArgs // {
-            inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test interface_contract";
-          });
-          test-dependency-boundary = craneLib.cargoTest (commonArgs // {
-            inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test dependency_boundary";
+            cargoTestExtraArgs = "--features datom --test contract";
           });
           test-doc = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
