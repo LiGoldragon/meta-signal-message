@@ -1,7 +1,12 @@
 ## Stack
 
-Datom. `protos`, `datom-codec`, `ethos-zero`, `rkyv`, and the ordinary
-`signal-message` contract. No `dotos`, no `signal-frame`, no `schema-rust`.
+Datom. `protos`, `datom-codec`, `ethos-zero`, `rkyv`, the shared `signal`
+frame layer, and the ordinary `signal-message` contract. No `dotos`, no
+`signal-frame`, no `schema-rust`.
+
+The portable frame (`Signal`, `Signalizable`, `ByteViewable`, `Restorable`)
+is imported from `signal`, never declared here: a second copy is a different
+Rust type, which forks the wire.
 
 ## Rules
 

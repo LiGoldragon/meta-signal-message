@@ -21,8 +21,8 @@ hand-writes a contract type or a codec implementation.
 
 ## Wire
 
-Values travel as bare rkyv archives of `Query` and `Response`. There is no
-envelope: each connection carries one request and one reply, so exchange
+Values travel as bare rkyv archives of `Query` and `Response`, framed by the
+shared portable `Signal<T>` imported from `signal`. There is no envelope: each connection carries one request and one reply, so exchange
 identity, lane and batch would be ceremony over a wire that never used them.
 The Datom text projection is the same values rendered by `datom-codec`.
 

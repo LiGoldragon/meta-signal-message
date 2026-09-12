@@ -135,12 +135,13 @@ dependencies = [
 
 [[package]]
 name = "meta-signal-message"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "datom-codec",
  "ethos-zero",
  "protos",
  "rkyv",
+ "signal",
  "signal-message",
 ]
 
@@ -284,6 +285,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
+name = "signal"
+version = "3.0.2"
+source = "git+https://github.com/LiGoldragon/signal.git?rev=8f9a0deb701cebbea518679548df4a795affc918#8f9a0deb701cebbea518679548df4a795affc918"
+dependencies = [
+ "datom-codec",
+ "ethos-zero",
+ "protos",
+ "rkyv",
+ "thiserror",
+]
+
+[[package]]
 name = "signal-message"
 version = "2.0.1"
 source = "git+https://github.com/LiGoldragon/signal-message.git?rev=2da9c6dde92dda11ba53aedaa75a3f3605b51454#2da9c6dde92dda11ba53aedaa75a3f3605b51454"
@@ -326,6 +339,26 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec86235f5fcc2a73650310756d2ac5b138a5780bbbdfae3eeccec992c435ba4f"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc04cd3e1236dd4a98afca4569f2deb3f120e5422a4023be2cb683f8486292af"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 3.0.5",
 ]
 
 [[package]]

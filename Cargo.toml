@@ -1,6 +1,6 @@
 [package]
 name = "meta-signal-message"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2024"
 rust-version = "1.89"
 license = "MIT OR Apache-2.0"
@@ -15,9 +15,10 @@ path = "src/lib.rs"
 
 [features]
 default = []
-datom = ["dep:datom-codec", "dep:protos", "signal-message/datom"]
+datom = ["dep:datom-codec", "dep:protos", "signal/datom", "signal-message/datom"]
 
 [dependencies]
+signal = { git = "https://github.com/LiGoldragon/signal.git", rev = "8f9a0deb701cebbea518679548df4a795affc918", default-features = false }
 signal-message = { git = "https://github.com/LiGoldragon/signal-message.git", rev = "2da9c6dde92dda11ba53aedaa75a3f3605b51454", default-features = false }
 datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "627db67f2655efd9f786864009955005fd8ab2ad", optional = true }
 protos = { git = "https://github.com/LiGoldragon/protos", rev = "171b21f65337983ab624b7b906397a4f1f92c5a3", optional = true }
