@@ -22,6 +22,7 @@ fn configuration() -> MessageDaemonConfiguration {
             ingress_socket_path: "/run/message/ingress/terminal-operator.sock".into(),
             socket_mode: 0o600,
         }],
+        prompt_relay_permissions: vec![],
         owner_identity: OwnerIdentity::UnixUser(1000),
     }
 }
