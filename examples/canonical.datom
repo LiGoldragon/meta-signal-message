@@ -1,7 +1,7 @@
 ; Canonical Datom examples for meta-signal-message.
 ; Every line is actualized by tests/contract.rs.
 
-Configure.{ /run/message/message.sock 432 /run/message/supervision.sock 384 /run/router/router.sock [ { { Terminal operator } /run/message/ingress/terminal-operator.sock 384 } ] UnixUser.1000 }
+Configure.{ /run/message/message.sock 432 /run/message/supervision.sock 384 /run/router/router.sock [ { { Terminal operator } /run/message/ingress/terminal-operator.sock 384 } ] [ ] UnixUser.1000 }
 ConfigurationRefused.ManagerAuthorityRequired
 ConfigurationRefused.UnsupportedConfiguration
 ConfigurationRefused.MalformedConfiguration
