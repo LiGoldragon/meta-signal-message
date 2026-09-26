@@ -1,57 +1,66 @@
 #![allow(dead_code, non_camel_case_types, non_snake_case)]
 #[rustfmt::skip]
-pub type ConfigurationRejected = RejectionReason;
+pub type OrdinarySocketPath = String;
 #[rustfmt::skip]
-pub type RejectionReason = ConfigurationRejectionReason;
+pub type MetaSocketPath = String;
 #[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+pub type FlowSocketPath = String;
+#[rustfmt::skip]
+pub type FlowMetaSocketPath = String;
+#[rustfmt::skip]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
-pub enum ConfigurationRejectionReason {
-    ManagerAuthorityRequired,
-    UnsupportedConfiguration,
-    MalformedConfiguration,
+pub struct MessageConfiguration {
+    pub ordinary_socket_path: OrdinarySocketPath,
+    pub meta_socket_path: MetaSocketPath,
+    pub flow_socket_path: FlowSocketPath,
+    pub flow_meta_socket_path: FlowMetaSocketPath,
+    pub meta_aspects: meta_signal_flow::MetaAspects,
 }
 #[rustfmt::skip]
-pub type Configured = Generation;
-#[rustfmt::skip]
-pub type Generation = ConfigurationGeneration;
-#[rustfmt::skip]
-pub type ConfigurationGeneration = i64;
-#[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
-pub struct RequestUnimplemented {
-    pub unimplemented_operation_kind: UnimplementedOperationKind,
-    pub reason: Reason,
+pub struct RedeliverRequest {
+    pub message_id: signal_message::MessageId,
+    pub flow_id: signal_flow::FlowId,
 }
 #[rustfmt::skip]
-pub type UnimplementedOperationKind = OperationKind;
-#[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
-pub enum OperationKind {
-    Configure,
+pub enum Activation {
+    Applied,
+    NexusRestartRequired,
 }
 #[rustfmt::skip]
-pub type Reason = UnimplementedReason;
-#[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
-pub enum UnimplementedReason {
-    NotBuiltYet,
-    DependencyNotReady,
+pub struct Configured {
+    pub message_configuration: MessageConfiguration,
+    pub activation: Activation,
 }
 #[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
+pub enum ConfigureRejection {
+    StoreRefused,
+}
+#[rustfmt::skip]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum Query {
-    Configure(signal_message::MessageDaemonConfiguration),
+    Configure(MessageConfiguration),
+    Send(signal_message::SendRequest),
+    Redeliver(RedeliverRequest),
 }
 #[rustfmt::skip]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "datom", derive(datom_codec::Datomizable, datom_codec::Composing))]
 pub enum Response {
-    ConfigurationRefused(ConfigurationRejected),
-    ConfigurationApplied(Configured),
-    OperationUnimplemented(RequestUnimplemented),
+    Configured(Configured),
+    ConfigureRejected(ConfigureRejection),
+    Submitted(signal_message::Submission),
+    SendRejected(signal_message::SendRejection),
+    Redelivered(signal_message::Receipt),
+    RedeliverRejected(signal_message::MessageRejection),
+    MetaRefused(meta_signal_flow::MetaRefusal),
 }

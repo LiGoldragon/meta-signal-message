@@ -1,9 +1,8 @@
-//! Meta Message Signal contract — the privileged configuration channel of the
-//! Message daemon.
+//! Privileged Message Nexus Signal contract: configuration, the owner's
+//! Send, and Redeliver out of Uncertain.
 //!
-//! The ordinary contract owns `MessageDaemonConfiguration`; this contract
-//! imports it by identity rather than redeclaring it, so the manager and the
-//! daemon agree on one shape.
+//! The Send request and its replies are the ordinary contract's own types,
+//! imported by identity, so the owner's Send and a flow's Send are one shape.
 
 pub mod generated;
 pub use generated::signal::*;
@@ -13,3 +12,4 @@ pub use generated::signal::*;
 pub use signal::{ByteViewable, Restorable, Signal, Signalizable};
 
 pub const ETHOS: &str = include_str!("../ethos/signal.ethos");
+pub const WIRE_VERSION: &str = env!("CARGO_PKG_VERSION");

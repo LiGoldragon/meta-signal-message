@@ -1,5 +1,24 @@
+; Message privileged Signal.
+;
+; The meta socket answers the configured owner and the flows whose aspect
+; is in MetaAspects; every other peer is answered MetaRefused. The owner
+; Sends here, stamped Owner. Redeliver is the only way out of Uncertain:
+; it hands Flow a new delivery of the same message to the same recipient.
+;
+; Configure is stored and applied. The Flow socket paths and MetaAspects
+; take effect on the next call (Applied); a changed own socket path takes
+; effect when the Nexus restarts (NexusRestartRequired).
+
 Signal
-[ signal_message:[ MessageDaemonConfiguration ] ]
-[ Configure.MessageDaemonConfiguration ]
-[ ConfigurationRefused.ConfigurationRejected ConfigurationApplied.Configured OperationUnimplemented.RequestUnimplemented ]
-[ ConfigurationRejected.RejectionReason RejectionReason.ConfigurationRejectionReason ConfigurationRejectionReason.[ ManagerAuthorityRequired UnsupportedConfiguration MalformedConfiguration ] Configured.Generation Generation.ConfigurationGeneration ConfigurationGeneration.Integer RequestUnimplemented.{ UnimplementedOperationKind Reason } UnimplementedOperationKind.OperationKind OperationKind.[ Configure ] Reason.UnimplementedReason UnimplementedReason.[ NotBuiltYet DependencyNotReady ] ]
+[ signal_flow:[ FlowId ] meta_signal_flow:[ MetaAspects MetaRefusal ] signal_message:[ MessageId SendRequest Submission SendRejection Receipt MessageRejection ] ]
+[ Configure.MessageConfiguration Send.SendRequest Redeliver.RedeliverRequest ]
+[ Configured.Configured ConfigureRejected.ConfigureRejection Submitted.Submission SendRejected.SendRejection Redelivered.Receipt RedeliverRejected.MessageRejection MetaRefused.MetaRefusal ]
+[ OrdinarySocketPath.String
+  MetaSocketPath.String
+  FlowSocketPath.String
+  FlowMetaSocketPath.String
+  MessageConfiguration.{ OrdinarySocketPath MetaSocketPath FlowSocketPath FlowMetaSocketPath MetaAspects }
+  RedeliverRequest.{ MessageId FlowId }
+  Activation.[ Applied NexusRestartRequired ]
+  Configured.{ MessageConfiguration Activation }
+  ConfigureRejection.[ StoreRefused ] ]

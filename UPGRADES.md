@@ -1,5 +1,17 @@
 # UPGRADES
 
+## 0.6.0 → 0.7.0 — configuration applied; the owner's Send; Redeliver
+
+`Configure` now carries `MessageConfiguration.{ OrdinarySocketPath
+MetaSocketPath FlowSocketPath FlowMetaSocketPath MetaAspects }` and answers
+`Configured.{ MessageConfiguration Activation }` or `ConfigureRejected`.
+`Send` (stamped Owner) and `Redeliver` are added; `MetaRefused` answers a peer
+the gate refuses. `ConfigurationApplied`, `ConfigurationRefused` and
+`OperationUnimplemented` are gone, and `MessageDaemonConfiguration` is no
+longer imported. Depends on `signal-message` 6.0.0, `signal-flow` 7.0.0 and
+`meta-signal-flow` 9.0.0.
+
+
 ## 0.3.1 → 0.6.0 — rewritten onto the Datom stack
 
 0.3.1 was not on the Datom stack at all: it was a `schema-rust` Interface

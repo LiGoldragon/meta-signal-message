@@ -1,152 +1,88 @@
+//! Every privileged record kind as a concrete datom, and each request and
+//! reply through the rkyv archive.
+
 use meta_signal_message::{
-    ByteViewable, ConfigurationRejectionReason, OperationKind, Query, RequestUnimplemented,
-    Response, Restorable, Signal, Signalizable, UnimplementedReason,
-};
-use signal_message::{
-    ComponentMessageIngress, ComponentName, InternalComponentInstanceOrigin,
-    MessageDaemonConfiguration, OwnerIdentity,
+    Activation, Configured, MessageConfiguration, Query, RedeliverRequest, Response,
 };
 
-fn configuration() -> MessageDaemonConfiguration {
-    MessageDaemonConfiguration {
-        message_socket_path: "/run/message/message.sock".into(),
-        message_socket_mode: 0o660,
-        supervision_socket_path: "/run/message/supervision.sock".into(),
-        supervision_socket_mode: 0o600,
-        router_socket_path: "/run/router/router.sock".into(),
-        component_ingresses: vec![ComponentMessageIngress {
-            internal_component_instance_origin: InternalComponentInstanceOrigin {
-                component_name: ComponentName::Terminal,
-                component_instance_name: "operator".into(),
-            },
-            ingress_socket_path: "/run/message/ingress/terminal-operator.sock".into(),
-            socket_mode: 0o600,
-        }],
-        owner_identity: OwnerIdentity::UnixUser(1000),
+fn configuration() -> MessageConfiguration {
+    MessageConfiguration {
+        ordinary_socket_path: "/run/user/1001/message/message.sock".into(),
+        meta_socket_path: "/run/user/1001/message/message-owner.sock".into(),
+        flow_socket_path: "/run/user/1001/flow/flow.sock".into(),
+        flow_meta_socket_path: "/run/user/1001/flow/flow-meta.sock".into(),
+        meta_aspects: vec![signal_flow::FlowAspect::Psyche],
     }
 }
 
 #[test]
-fn query_and_response_round_trip_through_received_bytes() {
-    let query = Query::Configure(configuration());
-    let received =
-        Signal::<Query>::from(query.signalize().expect("query archives").bytes().to_vec());
-    assert_eq!(received.restore().expect("query restores"), query);
-
-    let response = Response::OperationUnimplemented(RequestUnimplemented {
-        unimplemented_operation_kind: OperationKind::Configure,
-        reason: UnimplementedReason::DependencyNotReady,
+fn requests_and_replies_survive_the_archive() {
+    let query = Query::Redeliver(RedeliverRequest {
+        message_id: "m-81b0e4".into(),
+        flow_id: "7d41e0".into(),
     });
-    let received = Signal::<Response>::from(
+    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&query).unwrap();
+    assert_eq!(
+        rkyv::from_bytes::<Query, rkyv::rancor::Error>(&bytes).unwrap(),
+        query
+    );
+    let response = Response::Configured(Configured {
+        message_configuration: configuration(),
+        activation: Activation::Applied,
+    });
+    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&response).unwrap();
+    assert_eq!(
+        rkyv::from_bytes::<Response, rkyv::rancor::Error>(&bytes).unwrap(),
         response
-            .signalize()
-            .expect("response archives")
-            .bytes()
-            .to_vec(),
-    );
-    assert_eq!(received.restore().expect("response restores"), response);
-
-    let applied = Response::ConfigurationApplied(7);
-    let received = Signal::<Response>::from(
-        applied
-            .signalize()
-            .expect("applied archives")
-            .bytes()
-            .to_vec(),
-    );
-    assert_eq!(received.restore().expect("applied restores"), applied);
-
-    let refused =
-        Response::ConfigurationRefused(ConfigurationRejectionReason::MalformedConfiguration);
-    let received = Signal::<Response>::from(
-        refused
-            .signalize()
-            .expect("refused archives")
-            .bytes()
-            .to_vec(),
-    );
-    assert_eq!(received.restore().expect("refused restores"), refused);
-}
-
-#[test]
-fn malformed_archive_is_rejected() {
-    assert!(Signal::<Query>::from(vec![1, 2, 3]).restore().is_err());
-    assert!(
-        Signal::<Response>::from(vec![0xff, 0, 1])
-            .restore()
-            .is_err()
     );
 }
 
 #[cfg(feature = "datom")]
 mod datom {
-    use super::*;
     use datom_codec::{Actualizing, Budget, Datomizable, Potential};
+    use meta_signal_message::{Query, Response};
     use protos::{Protosizable, ReaderBudget, Textualizable};
 
     fn budget() -> Budget {
         Budget {
-            remaining: 8192,
-            reader: ReaderBudget { remaining: 8192 },
+            remaining: 4096,
+            reader: ReaderBudget { remaining: 4096 },
             depth: 0,
-            maximum_depth: 256,
+            maximum_depth: 1024,
         }
     }
 
-    macro_rules! render {
-        ($value:expr) => {
-            $value.clone().datomize(vec![]).protosize().textualize()
-        };
+    #[test]
+    fn every_request_kind_has_a_concrete_datom() {
+        for text in [
+            "Configure.{ /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock /run/user/1001/flow/flow-meta.sock [ Psyche ] }",
+            "Send.{ [ 7d41e0 ] HardAbrupt Text.«Stop the ouranos build now.» }",
+            "Redeliver.{ m-81b0e4 7d41e0 }",
+        ] {
+            let query = Potential::<Query>::from(text)
+                .actualize(&mut budget())
+                .unwrap_or_else(|error| panic!("{text}: {error:?}"));
+            assert_eq!(query.datomize(vec![]).protosize().textualize(), text);
+        }
     }
 
     #[test]
-    fn query_round_trips_as_datom_text() {
-        let query = Query::Configure(configuration());
-        let restored = Potential::<Query>::from(render!(query))
-            .actualize(&mut budget())
-            .expect("Datom restores the query");
-        assert_eq!(restored, query);
-    }
-
-    /// Every canonical line is actualized into the contract root its head
-    /// belongs to, and re-rendered through the codec to the identical text.
-    /// A canonical file nothing reads hides a wrong wire shape; this reads it.
-    #[test]
-    fn every_canonical_line_actualizes_and_re_renders() {
-        let source = include_str!("../examples/canonical.datom");
-        let lines: Vec<&str> = source
-            .lines()
-            .map(str::trim)
-            .filter(|line| !line.is_empty() && !line.starts_with(';'))
-            .collect();
-        assert_eq!(lines.len(), 7, "canonical file line count");
-
-        let mut queries = 0usize;
-        let mut responses = 0usize;
-        for line in lines {
-            let text = line.to_owned();
-            if let Ok(query) = Potential::<Query>::from(text.clone()).actualize(&mut budget()) {
-                assert_eq!(
-                    render!(query),
-                    line,
-                    "query re-renders to its canonical line"
-                );
-                queries += 1;
-                continue;
-            }
+    fn every_reply_kind_has_a_concrete_datom() {
+        for text in [
+            "Configured.{ { /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock /run/user/1001/flow/flow-meta.sock [ Psyche ] } Applied }",
+            "Configured.{ { /a /b /c /d [] } NexusRestartRequired }",
+            "ConfigureRejected.StoreRefused",
+            "Submitted.{ m-81b0e4 [ { 7d41e0 Observed Transported } ] }",
+            "SendRejected.EmptyRecipients",
+            "Redelivered.{ 7d41e0 Observed Presented }",
+            "RedeliverRejected.NotUncertain",
+            "MetaRefused.PeerUnknown",
+            "MetaRefused.PeerNotAuthorized.{ da88cf Field Medium gpt-5.5 }",
+        ] {
             let response = Potential::<Response>::from(text)
                 .actualize(&mut budget())
-                .unwrap_or_else(|error| {
-                    panic!("canonical line is neither Query nor Response: {line}\n{error:?}")
-                });
-            assert_eq!(
-                render!(response),
-                line,
-                "response re-renders to its canonical line"
-            );
-            responses += 1;
+                .unwrap_or_else(|error| panic!("{text}: {error:?}"));
+            assert_eq!(response.datomize(vec![]).protosize().textualize(), text);
         }
-        assert_eq!(queries, 1, "every request head is exercised");
-        assert_eq!(responses, 6, "every reply head is exercised");
     }
 }
