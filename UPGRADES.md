@@ -1,5 +1,12 @@
 # UPGRADES
 
+## 0.7.1 → 0.8.0 — a refusal names a Retired or Exited flow
+
+Repins `meta-signal-flow` 11.0.0 (2ac045c) and `signal-message` 8.0.0
+(d574200), whose `DeliveryRejection` gains `FlowRetired` and `FlowExited`.
+Nothing of this contract's own vocabulary changes; a reader of the owner's
+Send reply pinned to the older contracts cannot decode the new refusals.
+
 ## 0.6.0 → 0.7.0 — configuration applied; the owner's Send; Redeliver
 
 `Configure` now carries `MessageConfiguration.{ OrdinarySocketPath
