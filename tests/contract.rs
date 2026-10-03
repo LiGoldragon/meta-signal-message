@@ -41,7 +41,7 @@ fn requests_and_replies_survive_the_archive() {
 mod datom {
     use datom_codec::{Actualizing, Budget, Datomizable, Potential};
     use meta_signal_message::{Query, Response};
-    use protos::{Protosizable, ReaderBudget, Textualizable};
+    use protos::{Compactable, Protosizable, ReaderBudget};
 
     fn budget() -> Budget {
         Budget {
@@ -62,7 +62,7 @@ mod datom {
             let query = Potential::<Query>::from(text)
                 .actualize(&mut budget())
                 .unwrap_or_else(|error| panic!("{text}: {error:?}"));
-            assert_eq!(query.datomize(vec![]).protosize().textualize(), text);
+            assert_eq!(query.datomize(vec![]).protosize().compact(), text);
         }
     }
 
@@ -82,7 +82,7 @@ mod datom {
             let response = Potential::<Response>::from(text)
                 .actualize(&mut budget())
                 .unwrap_or_else(|error| panic!("{text}: {error:?}"));
-            assert_eq!(response.datomize(vec![]).protosize().textualize(), text);
+            assert_eq!(response.datomize(vec![]).protosize().compact(), text);
         }
     }
 }

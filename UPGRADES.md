@@ -1,5 +1,29 @@
 # UPGRADES
 
+## 0.8.0 → 0.9.0 — ethos-zero 16.0.0, signal 7.0.0, protos and datom-codec 0.32.2
+
+### What breaks
+
+- Repins `signal` 7.0.0 (66e7b153), `signal-message` 9.0.0 (0f5c0f0),
+  `signal-flow` 8.0.0 (c297d987) and `meta-signal-flow` 12.0.0 (69f9c146).
+  The re-exported frame types are signal 7.0.0's; the imported Send shapes
+  are signal-message 9.0.0's.
+- `Query` implements `signal::Contracted` over `ETHOS`; the meta socket's
+  wire identity is the digest of `ethos/signal.ethos`, which differs from
+  the ordinary contract's, so an ordinary greeting is refused here.
+- The `datom` feature pins protos and datom-codec 0.32.2 (15b41da8,
+  4dff16b4) and no longer enables `signal/datom`.
+- One-line datom text is `Compactable::compact`; protos 0.32's `textualize`
+  prints vertically.
+- Build dependency ethos-zero 16.0.0 (0edfc0c3). The ethos source and the
+  generated Rust are unchanged.
+
+### Deploying
+
+No runtime here. Repin message's `meta-signal-message` with
+`signal-message` 9.0.0 in the same pass (one `signal` per graph), rebuild
+the Message Nexus and both CLIs, and restart them together with flow 0.19.0.
+
 ## 0.7.1 → 0.8.0 — a refusal names a Retired or Exited flow
 
 Repins `meta-signal-flow` 11.0.0 (2ac045c) and `signal-message` 8.0.0
