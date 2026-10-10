@@ -389,8 +389,8 @@ dependencies = [
 
 [[package]]
 name = "signal-message"
-version = "12.0.0"
-source = "git+https://github.com/LiGoldragon/signal-message?rev=d2e361269fe9d57ffe084f4a3cfc5e5f1a709889#d2e361269fe9d57ffe084f4a3cfc5e5f1a709889"
+version = "13.0.0"
+source = "git+https://github.com/LiGoldragon/signal-message?rev=289d399c912821ea945d08da303bda50d11e1aca#289d399c912821ea945d08da303bda50d11e1aca"
 dependencies = [
  "datom-codec",
  "ethos-zero",
