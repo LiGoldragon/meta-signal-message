@@ -1,8 +1,8 @@
 //! Every privileged record kind as a concrete datom, and each request and
 //! reply through the rkyv archive.
 
-use signal_message::Configuration;
 use meta_signal_message::{ConfigureRefusal, ETHOS, Query, Response};
+use signal_message::Configuration;
 
 fn configuration() -> Configuration {
     Configuration {
@@ -67,11 +67,7 @@ mod datom {
 
     #[test]
     fn every_reply_kind_has_a_concrete_datom() {
-        for text in [
-            "Configured",
-            "RestartRequired",
-            "Refused.StoreRefused",
-        ] {
+        for text in ["Configured", "RestartRequired", "Refused.StoreRefused"] {
             let response = Potential::<Response>::from(text)
                 .actualize(&mut budget())
                 .unwrap_or_else(|error| panic!("{text}: {error:?}"));
