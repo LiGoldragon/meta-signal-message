@@ -4,6 +4,8 @@
 //! The Send request and its replies are the ordinary contract's own types,
 //! imported by identity, so the owner's Send and a flow's Send are one shape.
 
+extern crate signal_message as message_library;
+
 pub mod generated;
 pub use generated::signal::*;
 

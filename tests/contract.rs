@@ -1,7 +1,7 @@
 //! Every privileged record kind as a concrete datom, and each request and
 //! reply through the rkyv archive.
 
-use message_library::Configuration;
+use signal_message::Configuration;
 use meta_signal_message::{ConfigureRefusal, ETHOS, Query, RedeliverRequest, Response};
 
 fn configuration() -> Configuration {
@@ -14,7 +14,7 @@ fn configuration() -> Configuration {
 
 #[test]
 fn contract_identity_includes_shared_configuration() {
-    assert!(ETHOS.starts_with(message_library::LIBRARY_ETHOS));
+    assert!(ETHOS.starts_with(signal_message::LIBRARY_ETHOS));
 }
 
 #[test]

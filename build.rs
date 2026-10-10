@@ -1,5 +1,5 @@
 use ethos_zero::{Actualizing, File, Generating, Potential};
-use message_library::LIBRARY_ETHOS;
+use signal_message::LIBRARY_ETHOS;
 use std::path::PathBuf;
 
 fn main() {
