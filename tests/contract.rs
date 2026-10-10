@@ -1,22 +1,30 @@
 //! Every privileged record kind as a concrete datom, and each request and
 //! reply through the rkyv archive.
 
-use meta_signal_message::{
-    Activation, Configured, MessageConfiguration, Query, RedeliverRequest, Response,
-};
+use message_library::Configuration;
+use meta_signal_message::{ConfigureRefusal, ETHOS, Query, RedeliverRequest, Response};
 
-fn configuration() -> MessageConfiguration {
-    MessageConfiguration {
-        ordinary_socket_path: "/run/user/1001/message/message.sock".into(),
-        meta_socket_path: "/run/user/1001/message/message-owner.sock".into(),
-        flow_socket_path: "/run/user/1001/flow/flow.sock".into(),
-        flow_meta_socket_path: "/run/user/1001/flow/flow-meta.sock".into(),
-        meta_aspects: vec![signal_flow::FlowAspect::Psyche],
+fn configuration() -> Configuration {
+    Configuration {
+        ordinary: "/run/user/1001/message/message.sock".into(),
+        meta: "/run/user/1001/message/message-owner.sock".into(),
+        flow: "/run/user/1001/flow/flow.sock".into(),
     }
 }
 
 #[test]
+fn contract_identity_includes_shared_configuration() {
+    assert!(ETHOS.starts_with(message_library::LIBRARY_ETHOS));
+}
+
+#[test]
 fn requests_and_replies_survive_the_archive() {
+    let configure = Query::Configure(configuration());
+    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&configure).unwrap();
+    assert_eq!(
+        rkyv::from_bytes::<Query, rkyv::rancor::Error>(&bytes).unwrap(),
+        configure
+    );
     let query = Query::Redeliver(RedeliverRequest {
         message_id: "m-81b0e4".into(),
         flow_id: "7d41e0".into(),
@@ -26,15 +34,17 @@ fn requests_and_replies_survive_the_archive() {
         rkyv::from_bytes::<Query, rkyv::rancor::Error>(&bytes).unwrap(),
         query
     );
-    let response = Response::Configured(Configured {
-        message_configuration: configuration(),
-        activation: Activation::Applied,
-    });
-    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&response).unwrap();
-    assert_eq!(
-        rkyv::from_bytes::<Response, rkyv::rancor::Error>(&bytes).unwrap(),
-        response
-    );
+    for response in [
+        Response::Configured,
+        Response::RestartRequired,
+        Response::Refused(ConfigureRefusal::StoreRefused),
+    ] {
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&response).unwrap();
+        assert_eq!(
+            rkyv::from_bytes::<Response, rkyv::rancor::Error>(&bytes).unwrap(),
+            response
+        );
+    }
 }
 
 #[cfg(feature = "datom")]
@@ -55,7 +65,7 @@ mod datom {
     #[test]
     fn every_request_kind_has_a_concrete_datom() {
         for text in [
-            "Configure.{ /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock /run/user/1001/flow/flow-meta.sock [ Psyche ] }",
+            "Configure.{ /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock }",
             "Send.{ [ 7d41e0 ] HardAbrupt Text.«Stop the ouranos build now.» }",
             "Redeliver.{ m-81b0e4 7d41e0 }",
         ] {
@@ -69,9 +79,9 @@ mod datom {
     #[test]
     fn every_reply_kind_has_a_concrete_datom() {
         for text in [
-            "Configured.{ { /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock /run/user/1001/flow/flow-meta.sock [ Psyche ] } Applied }",
-            "Configured.{ { /a /b /c /d [] } NexusRestartRequired }",
-            "ConfigureRejected.StoreRefused",
+            "Configured",
+            "RestartRequired",
+            "Refused.StoreRefused",
             "Submitted.{ m-81b0e4 [ { 7d41e0 Observed Transported } ] }",
             "SendRejected.EmptyRecipients",
             "Redelivered.{ 7d41e0 Observed Presented }",

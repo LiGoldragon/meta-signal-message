@@ -11,7 +11,11 @@ pub use generated::signal::*;
 /// Declaring a second copy here would fork the wire, so it is imported.
 pub use signal::{ByteViewable, Restorable, Signal, Signalizable};
 
-pub const ETHOS: &str = include_str!("../ethos/signal.ethos");
+mod contract_source {
+    include!(concat!(env!("OUT_DIR"), "/contract_source.rs"));
+}
+
+pub use contract_source::ETHOS;
 pub const WIRE_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// The contract is identified on the wire by the digest of its authored

@@ -1,6 +1,6 @@
 [package]
 name = "meta-signal-message"
-version = "0.10.0"
+version = "0.11.0"
 edition = "2024"
 rust-version = "1.89"
 license = "MIT OR Apache-2.0"
@@ -15,11 +15,12 @@ path = "src/lib.rs"
 
 [features]
 default = []
-datom = ["dep:datom-codec", "dep:protos", "signal-message/datom", "signal-flow/datom", "meta-signal-flow/datom", "signal/datom"]
+datom = ["dep:datom-codec", "dep:protos", "signal-message/datom", "message_library/datom", "signal-flow/datom", "meta-signal-flow/datom", "signal/datom"]
 
 [dependencies]
 signal = { git = "https://github.com/LiGoldragon/signal", rev = "f35460de930943ea1a8a972453ccf3a092a655b5", default-features = false }
-signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "b94d907c4c02c04e9db8754777bdbf169b7ef61b", default-features = false }
+signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "148b108d700a32f90dfcb3677a9be854a065a0f1", default-features = false }
+message_library = { package = "signal-message", git = "https://github.com/LiGoldragon/signal-message", rev = "148b108d700a32f90dfcb3677a9be854a065a0f1", default-features = false }
 signal-flow = { git = "https://github.com/LiGoldragon/signal-flow", rev = "f95034de0b203d886ba574fcb513c691c64b8498" }
 meta-signal-flow = { git = "https://github.com/LiGoldragon/meta-signal-flow", rev = "54eb5618e1433b68520ba9644e0428ea0f9ed75d" }
 datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "4dff16b4f7412febc3b71aac8b49680cd20988cb", optional = true }
@@ -28,6 +29,7 @@ rkyv = { version = "0.8", default-features = false, features = ["std", "bytechec
 
 [build-dependencies]
 ethos-zero = { git = "https://github.com/LiGoldragon/ethos-zero", rev = "c2653dd82adbdb1f1f2f654405c6620e0d06fd58" }
+message_library = { package = "signal-message", git = "https://github.com/LiGoldragon/signal-message", rev = "148b108d700a32f90dfcb3677a9be854a065a0f1", default-features = false }
 
 [lints.rust]
 unsafe_code = "forbid"
