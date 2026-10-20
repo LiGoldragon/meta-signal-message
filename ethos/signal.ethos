@@ -1,16 +1,8 @@
-; Message's privileged Signal.
-;
-; The owner Sends here, stamped Owner. Redeliver is the only way out of
-; Uncertain: it hands Flow a new delivery of the same message to the same
-; recipient.
-;
-; Meta Configure marks the stored configuration as Meta-configured. A
-; changed address takes effect when the Nexus restarts, so the reply is
-; RestartRequired.
+; The owner configures Message's sockets and Flow edge here.
+; A changed socket path takes effect after a restart.
 
 Signal
-[ signal_flow:[ FlowId ] meta_signal_flow:[ MetaRefusal ] signal_message:[ MessageId SendRequest Submission SendRejection Receipt MessageRejection ] message_library:[ Configuration ] ]
-[ Configure.Configuration Send.SendRequest Redeliver.RedeliverRequest ]
-[ Configured RestartRequired Refused.ConfigureRefusal Submitted.Submission SendRejected.SendRejection Redelivered.Receipt RedeliverRejected.MessageRejection MetaRefused.MetaRefusal ]
-[ ConfigureRefusal.[ StoreRefused ]
-  RedeliverRequest.{ MessageId FlowId } ]
+[ message_library:Configuration ]
+[ Configure.Configuration ]
+[ Configured RestartRequired Refused.ConfigureRefusal ]
+[ ConfigureRefusal.[ StoreRefused ] ]

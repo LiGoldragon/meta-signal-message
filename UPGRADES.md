@@ -1,5 +1,14 @@
 # UPGRADES
 
+## 0.11.0 → 0.12.0 — configuration only
+
+The Meta Signal now carries only `Configure`. Privileged `Send`,
+`Redeliver`, receipt, and meta-refusal variants are removed. Send uses
+the ordinary typed Message contract; old peers cannot greet this one.
+
+Repin `signal-message` 12.0.0 and `signal` e0e3c055 together. Rebuild
+Message and restart it with the matching Flow and Signal packages.
+
 ## 0.9.0 → 0.10.0 — signal 8.0.0, signal-message 10.0.0, signal-flow 10.0.0, meta-signal-flow 14.0.0
 
 ### What breaks

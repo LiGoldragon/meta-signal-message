@@ -1,8 +1,4 @@
-//! Privileged Message Nexus Signal contract: configuration, the owner's
-//! Send, and Redeliver out of Uncertain.
-//!
-//! The Send request and its replies are the ordinary contract's own types,
-//! imported by identity, so the owner's Send and a flow's Send are one shape.
+//! Privileged Message Nexus configuration Signal contract.
 
 extern crate signal_message as message_library;
 
