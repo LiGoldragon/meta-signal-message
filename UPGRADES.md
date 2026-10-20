@@ -1,5 +1,10 @@
 # UPGRADES
 
+## 0.14.0 → 0.15.0 — signal-message 16.0.0
+
+Pins signal-message 16.0.0 (signal-flow 25.0.0). The wire is unchanged.
+Repin `message` with it.
+
 ## 0.11.0 → 0.12.0 — configuration only
 
 The Meta Signal now carries only `Configure`. Privileged `Send`,
