@@ -55,9 +55,8 @@ mod datom {
 
     #[test]
     fn every_request_kind_has_a_concrete_datom() {
-        for text in [
-            "Configure.{ /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock }",
-        ] {
+        {
+            let text = "Configure.{ /run/user/1001/message/message.sock /run/user/1001/message/message-owner.sock /run/user/1001/flow/flow.sock }";
             let query = Potential::<Query>::from(text)
                 .actualize(&mut budget())
                 .unwrap_or_else(|error| panic!("{text}: {error:?}"));
