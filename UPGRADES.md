@@ -1,5 +1,10 @@
 # UPGRADES
 
+## 0.15.0 → 0.16.0 — signal-message 17.0.0
+
+Pins signal-message 17.0.0 (`10e0901`), which adds a typed oversized Send
+refusal. The meta wire is unchanged; repin Message with it.
+
 ## 0.14.0 → 0.15.0 — signal-message 16.0.0
 
 Pins signal-message 16.0.0 (signal-flow 25.0.0). The wire is unchanged.
