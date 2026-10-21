@@ -1,5 +1,11 @@
 # UPGRADES
 
+## 0.16.0 → 0.17.0 — signal-message 18.0.0
+
+Pins signal-message 18.0.0 (`8db91d8`), which adds the accepted-send and
+resumable delivery-observation wire types. This meta contract remains
+Configure-only; repin Message with it.
+
 ## 0.15.0 → 0.16.0 — signal-message 17.0.0
 
 Pins signal-message 17.0.0 (`10e0901`), which adds a typed oversized Send
