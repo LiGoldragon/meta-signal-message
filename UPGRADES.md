@@ -92,7 +92,7 @@ longer imported. Depends on `signal-message` 6.0.0, `signal-flow` 7.0.0 and
 ## 0.3.1 → 0.6.0 — rewritten onto the Datom stack
 
 0.3.1 was not on the Datom stack at all: it was a `schema-rust` Interface
-projection over `signal-frame`, `dotos`, `sema-translator`, `core-ethos`,
+projection over `signal-frame`, `dotos`, `memory-translator`, `core-ethos`,
 `name-table` and `rust-logos`, whose Rust type names were name-table hashes.
 
 ### What breaks
