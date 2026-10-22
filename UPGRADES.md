@@ -1,5 +1,11 @@
 # UPGRADES
 
+## 0.17.0 → 0.17.1 — simplified Flow peer
+
+Pins signal-message 18.0.1, whose imported Message wire types are
+unchanged. The meta contract remains Configure-only. Repin and rebuild
+Message alongside Flow 0.39.0.
+
 ## 0.16.0 → 0.17.0 — signal-message 18.0.0
 
 Pins signal-message 18.0.0 (`8db91d8`), which adds the accepted-send and
