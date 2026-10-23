@@ -125,3 +125,8 @@ consumer is `message`, which moves with it. Pin `signal` as
 `https://github.com/LiGoldragon/signal` with no `.git` suffix — `signal`
 declares `links = "signal"`, and cargo source identity is the pin string
 rather than the commit.
+
+## 0.17.0 → 0.18.0 — terminal Message contract
+
+Pins signal-message 19.0.0, which carries Flow's terminal direct Send outcomes.
+The privileged Configure wire is unchanged.
