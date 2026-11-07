@@ -1,5 +1,14 @@
 # UPGRADES
 
+## 1.0.0 → 2.0.0 — signal-message 20.0.0 and the 0.33 codec stack
+
+Repins signal-message `2c5a007` (Flow `9f159d9` vocabulary: `Address` carries a
+`Model`; see its UPGRADES), signal `7afb68b`, datom-codec `eabead4`, protos
+`3c7ade3` and generator ethos-zero `5a5daca`. The authored Ethos and the archive
+layout of this contract are unchanged; the projection regenerates with one added
+`clippy::type_complexity` allowance. Repin `message` to this release together
+with signal-message 20.0.0.
+
 ## 0.17.0 → 0.17.1 — simplified Flow peer
 
 Pins signal-message 18.0.1, whose imported Message wire types are
