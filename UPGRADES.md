@@ -1,5 +1,11 @@
 # UPGRADES
 
+## 2.0.0 → 3.0.0 — signal-message 21
+
+Pins signal-message 21.0.0, whose imported Flow types come from signal-flow
+56.0.0. The meta contract remains Configure-only and its authored wire is
+unchanged. Repin Message with the ordinary contract in one dependency graph.
+
 ## 1.0.0 → 2.0.0 — signal-message 20.0.0 and the 0.33 codec stack
 
 Repins signal-message `2c5a007` (Flow `9f159d9` vocabulary: `Address` carries a
