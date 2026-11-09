@@ -1,5 +1,19 @@
 # UPGRADES
 
+## 3.0.1 → 4.0.0 — signal-message 22, ethos-zero 22, on build-base 404cf8d
+
+Pins signal-message 22.0.0 (`2fed750`), signal 11.0.0 (`6d4eb74`),
+datom-codec `09a0526`, protos `c93b598` and generator ethos-zero 22.0.0
+(`1976e45`); signal-flow `6881724` and flow-ethos `d1effd4b` come through
+signal-message. The authored Ethos, the generated contract, its digest and
+every datom text form are unchanged.
+
+- Configuration's fields are signal-message 22's newtypes `Ordinary`, `Meta`
+  and `Flow` over String: a consumer wraps a value with the constructor and
+  reads it with `.0`.
+- The flake is the build-base form with a committed Cargo.nix; the third-party
+  crates sit at build-base's version set.
+
 ## 3.0.0 → 3.0.1 — signal-message 21.0.1
 
 Pins signal-message 21.0.1 (`998c824`), whose imported Flow types come from

@@ -2,13 +2,13 @@
 //! reply through the rkyv archive.
 
 use meta_signal_message::{ConfigureRefusal, ETHOS, Query, Response};
-use signal_message::Configuration;
+use signal_message::{Configuration, Flow, Meta, Ordinary};
 
 fn configuration() -> Configuration {
     Configuration {
-        ordinary: "/run/user/1001/message/message.sock".into(),
-        meta: "/run/user/1001/message/message-owner.sock".into(),
-        flow: "/run/user/1001/flow/flow.sock".into(),
+        ordinary: Ordinary("/run/user/1001/message/message.sock".into()),
+        meta: Meta("/run/user/1001/message/message-owner.sock".into()),
+        flow: Flow("/run/user/1001/flow/flow.sock".into()),
     }
 }
 
