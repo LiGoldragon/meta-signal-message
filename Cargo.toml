@@ -19,14 +19,14 @@ datom = ["dep:datom-codec", "dep:protos", "signal-message/datom", "signal/datom"
 
 [dependencies]
 signal = { git = "https://github.com/LiGoldragon/signal", rev = "7afb68bcd19ce774f47d11c5e69f6e10054f78de", default-features = false }
-signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "a5e04b756dc300ba90f9fde2fa3ff6f5cc24e445", default-features = false }
+signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "998c824c98a1e2f5e32f9e3a69bf09d3a29aff6b", default-features = false }
 datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "eabead4", optional = true }
 protos = { git = "https://github.com/LiGoldragon/protos", rev = "3c7ade3", optional = true }
 rkyv = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 
 [build-dependencies]
 ethos-zero = { git = "https://github.com/LiGoldragon/ethos-zero", rev = "5a5daca" }
-signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "a5e04b756dc300ba90f9fde2fa3ff6f5cc24e445", default-features = false }
+signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "998c824c98a1e2f5e32f9e3a69bf09d3a29aff6b", default-features = false }
 
 [lints.rust]
 unsafe_code = "forbid"

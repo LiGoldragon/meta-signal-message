@@ -2,8 +2,8 @@
 
 ## 3.0.0 → 3.0.1 — signal-message 21.0.1
 
-Pins signal-message 21.0.1 (`a5e04b7`), whose imported Flow types come from
-signal-flow 57.0.0 (`8e56457`). The meta contract and its wire are
+Pins signal-message 21.0.1 (`998c824`), whose imported Flow types come from
+signal-flow 57.0.0 (`3d0a4cd`). The meta contract and its wire are
 unchanged. Repin Message with the ordinary contract in one dependency graph.
 
 ## 2.0.0 → 3.0.0 — signal-message 21
