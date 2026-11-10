@@ -1,3 +1,8 @@
+## 4.0.1: signal-message 2999252
+
+signal-message moves to 2999252, which pins flow-ethos 5c61d666 (0.54.0) and
+signal-flow 15790be. The contract and every datom form are unchanged.
+
 # UPGRADES
 
 ## 3.0.1 → 4.0.0 — signal-message 22, ethos-zero 22, on build-base 404cf8d

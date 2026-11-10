@@ -329,13 +329,13 @@ rec {
       };
       "flow-ethos" = rec {
         crateName = "flow-ethos";
-        version = "0.53.3";
+        version = "0.54.0";
         edition = "2024";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/LiGoldragon/flow";
-          rev = "d1effd4b53ba895f08949ea5cf32f91f63f909bb";
-          sha256 = "0mak7mrvq45fmppfgyzbb8r192jw3ivk1hdjrhmpsj2cpdvwi7yj";
+          rev = "5c61d66648a17a218147f3ec11dd995847c8303d";
+          sha256 = "00c2qq5kbxn6zlbb2b4pyrp862yjsck187i707d3gizffc90zq6d";
         };
         libName = "flow_ethos";
         dependencies = [
@@ -530,7 +530,7 @@ rec {
       };
       "meta-signal-message" = rec {
         crateName = "meta-signal-message";
-        version = "4.0.0";
+        version = "4.0.1";
         edition = "2024";
         src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         libName = "meta_signal_message";
@@ -1042,13 +1042,13 @@ rec {
       };
       "signal-flow" = rec {
         crateName = "signal-flow";
-        version = "58.0.1";
+        version = "58.0.2";
         edition = "2024";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/LiGoldragon/signal-flow";
-          rev = "6881724d1752058195a770ab8244763151904541";
-          sha256 = "10ma0vqf3xsmk5bdyhypcn9g25b1svmyb6zbbdrwgx99kffh9mgz";
+          rev = "15790be9d6549e03912afa9603f9b4098622ba2e";
+          sha256 = "1imw199l2nqq0mn1dvvqcbaclkpb7q9xa17cb02f7v578wqzhzs2";
         };
         libName = "signal_flow";
         dependencies = [
@@ -1092,13 +1092,13 @@ rec {
       };
       "signal-message" = rec {
         crateName = "signal-message";
-        version = "22.0.0";
+        version = "22.0.1";
         edition = "2024";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/LiGoldragon/signal-message";
-          rev = "2fed7500c915befc8fc42359771e8a27d43a451e";
-          sha256 = "1ynal4j1jz475gfvg1nlhdkd6fahr1xbj11db2b93m9apidwz8l5";
+          rev = "29992527e8da25b1f659c8827101f2a8b047f313";
+          sha256 = "0yccv3m4ki7mrf8xk83wdjg3g48wbnxj3iz0jaq1jqn67q68llz8";
         };
         libName = "signal_message";
         dependencies = [
