@@ -1,3 +1,9 @@
+## 4.0.2: signal-message 23.0.0 (6d82783)
+
+signal-message moves to 23.0.0, which pins signal-flow 60.0.0 (`04a72fd`)
+and flow-ethos 0.54.3 (`062ef9e1`). This contract and every datom form it
+writes are unchanged.
+
 ## 4.0.1: signal-message 2999252
 
 signal-message moves to 2999252, which pins flow-ethos 5c61d666 (0.54.0) and
