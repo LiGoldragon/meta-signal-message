@@ -275,7 +275,7 @@ rec {
         sha256 = "03swzqznragy8n0x31lqc78g2af054jwivp7lkrbrc0khz74lyl7";
 
       };
-      "ethos-zero" = rec {
+      "ethos-zero 22.0.0" = rec {
         crateName = "ethos-zero";
         version = "22.0.0";
         edition = "2024";
@@ -285,6 +285,58 @@ rec {
           url = "https://github.com/LiGoldragon/ethos-zero";
           rev = "1976e45fe1edfd5676cb33919dba1ec20c785a02";
           sha256 = "12b6np5n8knlpv2rb98g0m04n6xxaprd8n5hy4wgw658h5vg216j";
+        };
+        libName = "ethos_zero";
+        dependencies = [
+          {
+            name = "datom-codec";
+            packageId = "datom-codec";
+            features = [ "rkyv" ];
+          }
+          {
+            name = "prettyplease";
+            packageId = "prettyplease";
+          }
+          {
+            name = "proc-macro2";
+            packageId = "proc-macro2";
+          }
+          {
+            name = "protos";
+            packageId = "protos";
+            features = [ "rkyv" ];
+          }
+          {
+            name = "quote";
+            packageId = "quote";
+          }
+          {
+            name = "rkyv";
+            packageId = "rkyv";
+            usesDefaultFeatures = false;
+            features = [ "std" "bytecheck" "little_endian" "pointer_width_32" "unaligned" ];
+          }
+          {
+            name = "syn";
+            packageId = "syn 3.0.5";
+            features = [ "full" ];
+          }
+        ];
+        features = {
+          "default" = [ "datom" ];
+        };
+        resolvedDefaultFeatures = [ "datom" "default" ];
+      };
+      "ethos-zero 27.0.0" = rec {
+        crateName = "ethos-zero";
+        version = "27.0.0";
+        edition = "2024";
+        crateBin = [];
+        workspace_member = null;
+        src = pkgs.fetchgit {
+          url = "https://github.com/LiGoldragon/ethos-zero";
+          rev = "8c95310c4c372cfe115cdebc3e85021b98cf2974";
+          sha256 = "1nqshn23ibbnnadi10wj79dn6wcjjkgfav6qkwsa7jg6r9m87v76";
         };
         libName = "ethos_zero";
         dependencies = [
@@ -359,7 +411,7 @@ rec {
         buildDependencies = [
           {
             name = "ethos-zero";
-            packageId = "ethos-zero";
+            packageId = "ethos-zero 22.0.0";
           }
         ];
         features = {
@@ -530,7 +582,7 @@ rec {
       };
       "meta-signal-message" = rec {
         crateName = "meta-signal-message";
-        version = "4.0.2";
+        version = "4.0.3";
         edition = "2024";
         src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         libName = "meta_signal_message";
@@ -565,7 +617,7 @@ rec {
         buildDependencies = [
           {
             name = "ethos-zero";
-            packageId = "ethos-zero";
+            packageId = "ethos-zero 22.0.0";
           }
           {
             name = "signal-message";
@@ -1032,7 +1084,7 @@ rec {
         buildDependencies = [
           {
             name = "ethos-zero";
-            packageId = "ethos-zero";
+            packageId = "ethos-zero 22.0.0";
           }
         ];
         features = {
@@ -1042,13 +1094,13 @@ rec {
       };
       "signal-flow" = rec {
         crateName = "signal-flow";
-        version = "60.0.0";
+        version = "63.0.0";
         edition = "2024";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/LiGoldragon/signal-flow";
-          rev = "04a72fd35345f63a06352c17f46f997d7fdafaee";
-          sha256 = "0lkpi5wfykk30x9b35bia592cs8v83bbmgb6c9nl5dmm44ra693r";
+          rev = "4982eeb6f8b2ef8a86a0070dc02acaf0f2088272";
+          sha256 = "0qgbr9kmbnj51h3ng8677l92kii0pdzg8dliwzgdb53sa1isgin1";
         };
         libName = "signal_flow";
         dependencies = [
@@ -1082,7 +1134,7 @@ rec {
         buildDependencies = [
           {
             name = "ethos-zero";
-            packageId = "ethos-zero";
+            packageId = "ethos-zero 27.0.0";
           }
         ];
         features = {
@@ -1092,13 +1144,13 @@ rec {
       };
       "signal-message" = rec {
         crateName = "signal-message";
-        version = "23.0.0";
+        version = "24.0.0";
         edition = "2024";
         workspace_member = null;
         src = pkgs.fetchgit {
           url = "https://github.com/LiGoldragon/signal-message";
-          rev = "6d82783e35393c9037283cbfd9f98053d22e1b46";
-          sha256 = "1x8pbnzia7siv6lirj0hpy4ynlxclkixaj6zi7zywxak47xrvsgw";
+          rev = "97bb3a87b3747e99a244e12f470ef547bce64337";
+          sha256 = "147wbz9k0cyf6f3vx78f230dpjsaqzg5nzjaw9k6n14sdkjavv8c";
         };
         libName = "signal_message";
         dependencies = [
@@ -1131,7 +1183,7 @@ rec {
         buildDependencies = [
           {
             name = "ethos-zero";
-            packageId = "ethos-zero";
+            packageId = "ethos-zero 22.0.0";
           }
         ];
         features = {

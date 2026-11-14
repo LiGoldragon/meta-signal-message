@@ -1,6 +1,6 @@
 [package]
 name = "meta-signal-message"
-version = "4.0.2"
+version = "4.0.3"
 edition = "2024"
 rust-version = "1.89"
 license = "MIT OR Apache-2.0"
@@ -19,14 +19,14 @@ datom = ["dep:datom-codec", "dep:protos", "signal-message/datom", "signal/datom"
 
 [dependencies]
 signal = { git = "https://github.com/LiGoldragon/signal", rev = "6d4eb74", default-features = false }
-signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "6d82783", default-features = false }
+signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "97bb3a8", default-features = false }
 datom-codec = { git = "https://github.com/LiGoldragon/datom-codec", rev = "09a0526", optional = true }
 protos = { git = "https://github.com/LiGoldragon/protos", rev = "c93b598", optional = true }
 rkyv = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 
 [build-dependencies]
 ethos-zero = { git = "https://github.com/LiGoldragon/ethos-zero", rev = "1976e45" }
-signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "6d82783", default-features = false }
+signal-message = { git = "https://github.com/LiGoldragon/signal-message", rev = "97bb3a8", default-features = false }
 
 [lints.rust]
 unsafe_code = "forbid"
